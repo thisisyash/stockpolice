@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { getAlerts } from '../services/api'
+import { getAlerts, getUserData } from '../services/api'
 import { Button, Box, Paper, TextField, Grid} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
@@ -46,6 +46,7 @@ function Alerts() {
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const [fromTs, setFromTs] = useState(new Date(new Date().setHours(0,0,0,0)).getTime())
 
+
   // const [groups, setGroups] = useState({})
 
   useEffect(() => {
@@ -73,18 +74,20 @@ function Alerts() {
   }, [])
 
   const getDateWiseAlerts = (fromTs) => {
-    getAlerts(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime()).then((response => {
-      let prevAlerts = Array.from(alerts)
-      prevAlerts.push(
-        {
-          timeStamp : fromTs,
-          alertItems : response
-        }
-      )
-      setAlerts(prevAlerts)
-      hideLoader()
-      setLoading(false)
-    }))
+    getUserData(getUserId()).then((resp) => {
+      getAlerts(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime(), resp.groups).then((response => {
+        let prevAlerts = Array.from(alerts)
+        prevAlerts.push(
+          {
+            timeStamp : fromTs,
+            alertItems : response
+          }
+        )
+        setAlerts(prevAlerts)
+        hideLoader()
+        setLoading(false)
+      }))
+    })
   }
 
   const loadMoreAlerts = () => {

@@ -173,7 +173,7 @@ function Groups() {
 
   const confirmDeleteUser = () => { 
     showLoader()
-    deleteUserApi(selectedUser).then(() => {
+    deleteUserApi(selectedUser, activeGroup).then(() => {
       setSelectedUser(null)
       hideLoader()
       setNewActiveGroup(activeGroup)

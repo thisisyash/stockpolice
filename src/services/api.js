@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, increment, orderBy, where, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, increment, orderBy, where, deleteDoc, arrayRemove } from "firebase/firestore";
 import { db } from '../firebase'
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useContext } from "react";
@@ -40,15 +40,26 @@ export const createNewUser = (async(userData) => {
   })
 })
 
-export const deleteUserApi = ((userData) => {
+export const deleteUserApi = ((userData, groupName) => { 
   const userCollRef = collection(db, 'users')
-  return new Promise((resolve, reject)=> {
-    deleteDoc(doc(userCollRef, userData.mobileNo)).then((querySnapshot) => {
-      resolve(userData)
-    }).catch((error)=> {
-      reject(error)
+  if (userData.groups.length == 1) {
+    return new Promise((resolve, reject)=> {
+      deleteDoc(doc(userCollRef, userData.mobileNo)).then((querySnapshot) => {
+        resolve(userData)
+      }).catch((error)=> {
+        reject(error)
+      })
     })
-  })
+  } else {
+    return new Promise((resolve, reject)=> {
+      updateDoc(doc(userCollRef, userData.mobileNo), {groups : arrayRemove(groupName)}).then((querySnapshot) => {
+        resolve({})
+      }).catch((error)=> {
+        reject(error)
+      })
+    })
+  }
+
 })
 
 // Should remove id and fetch from cookie
@@ -146,7 +157,6 @@ export const sendNewNotification = (async(data) => {
 
 
 export const registerToken = (async(tokenId, groups) => {
-  console.log("=======register token====", tokenId, groups)
   return new Promise(async(resolve, reject) => {
     const orderResp = await fetch("https://stockpolice-server.herokuapp.com/subscribe", {
       "method": "POST",
@@ -169,17 +179,19 @@ export const registerToken = (async(tokenId, groups) => {
   })
 })
 
-export const getAlerts = (async(fromTs, toTs) => {
+export const getAlerts = (async(fromTs, toTs, groups) => {
+  console.log(groups)
   return new Promise((resolve, reject) => {
     getDocs(query( collection(db, `alerts`),
                    where('timeStamp', '<', toTs),
-                   where('timeStamp', '>', fromTs), 
+                   where('timeStamp', '>', fromTs),
                    orderBy('timeStamp', 'desc')
                  )
             ).then((querySnapshot) => {
       let eventItems = []
       querySnapshot.forEach((doc) => {
-        eventItems.push(doc.data())      
+        if (groups.includes(doc.data().topic))
+          eventItems.push(doc.data())      
       })
       resolve(eventItems)
     }).catch(()=> {
