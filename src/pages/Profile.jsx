@@ -21,7 +21,7 @@ const styles = {
     borderRadius:'50%'
   },
   defIcon: {
-    fontSize:'25vw'
+    fontSize:'100px'
   },
   profilePicCont : {
     display:'flex',

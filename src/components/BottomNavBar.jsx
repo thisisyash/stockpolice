@@ -12,7 +12,8 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 function BottomNavBar() {
   const [activeIndex, setActiveIndex] = useState(0)
-  const {getUserId} = useContext(AuthContext)
+  const {isUserAdmin} = useContext(AuthContext)
+
 
   const navigate    = useNavigate()
   return (
@@ -41,7 +42,9 @@ function BottomNavBar() {
       <BottomNavigationAction label="Home" icon={<HomeIcon />}/> 
       <BottomNavigationAction label="Alerts" icon={<NotificationsActiveIcon />}/> 
       <BottomNavigationAction label="Profile" icon={<PersonIcon />}/>
-      {/* <BottomNavigationAction label="Admin" icon={<AdminPanelSettingsIcon />}/> */}
+      {
+        isUserAdmin() ? <BottomNavigationAction label="Admin" icon={<AdminPanelSettingsIcon />}/> : null
+      }
     </BottomNavigation>
   )
 }

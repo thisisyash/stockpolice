@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "764980616620",
+    "project_id": "stock-police",
+    "storage_bucket": "stock-police.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:764980616620:android:9601f90b3cfe1c4bccee09",
+        "android_client_info": {
+          "package_name": "com.brandorigin.stockpolice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "764980616620-s5pul24kfrp0posv06hanc9dmiup1jsm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwlJTDx58GJNakp2y4iPvWLWdmScnHXAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "764980616620-s5pul24kfrp0posv06hanc9dmiup1jsm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

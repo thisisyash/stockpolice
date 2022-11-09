@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import stockpolice from '../assets/stockpolice.png'
+import { AuthContext } from '../contexts/AuthContext';
 
 const styles = {
   sidebarCont : {
@@ -21,6 +22,7 @@ const styles = {
 
 function Sidebar() {
 
+  const {isUserAdmin} = useContext(AuthContext)
   const navigate = useNavigate()
 
   const boxSX = {
@@ -42,15 +44,19 @@ function Sidebar() {
        <Box sx={boxSX} onClick={() => navigate("/alerts")}>
           Alerts
        </Box>
-       <Box sx={boxSX} onClick={() => navigate("/uploadContacts")}>
-          Upload Contacts
-       </Box>
-       <Box sx={boxSX} onClick={() => navigate("/sendNotification")}>
-          Send Notification
-       </Box>
-       <Box sx={boxSX} onClick={() => navigate("/manageUsers")}>
-          Manage Users
-       </Box>
+       {
+         isUserAdmin() ? <>
+          <Box sx={boxSX} onClick={() => navigate("/uploadContacts")}>
+              Upload Contacts
+          </Box>
+          <Box sx={boxSX} onClick={() => navigate("/sendNotification")}>
+              Send Notification
+          </Box>
+          <Box sx={boxSX} onClick={() => navigate("/groups")}>
+              Groups
+          </Box>
+         </> : null
+       }
        <Box sx={boxSX} onClick={() => navigate("/profile")}>
           Profile
        </Box>

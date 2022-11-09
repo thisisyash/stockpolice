@@ -11,7 +11,7 @@ const styles = {
     overflowY:'scroll'
   },
   desktopCont : {
-    width : '50vw',
+    // width : '50vw',
     overflowY:'scroll',
     marginLeft:'15vw',
     fontSize:'25px',

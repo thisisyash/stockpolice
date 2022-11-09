@@ -78,11 +78,11 @@ function AdminPanel() {
           </Grid>
 
           <Grid item xs>
-            <Paper style={styles.contentCard} onClick={() => navigate('/manageUsers')}>
+            <Paper style={styles.contentCard} onClick={() => navigate('/groups')}>
               <SupervisorAccountIcon 
               fontSize='large'/>
               <Button>
-                Manage Users
+                Groups
               </Button>
             </Paper>
           </Grid>

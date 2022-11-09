@@ -12,6 +12,7 @@ export const AuthContextProvider = (props) => {
 
   const [userProfileData, setUserProfileData] = useState({})
   const [cookies, setCookie, removeCookie] = useCookies(['userId'])
+  // const [isAdmin, setIsAdmin] = useState(false)
   const { showLoader, hideLoader, showAlert } = useContext(CommonContext)
 
   const navigate = useNavigate()
@@ -22,7 +23,9 @@ export const AuthContextProvider = (props) => {
     setUserProfileData,
     userLoggedIn,
     isUserLoggedIn,
-    getUserId
+    getUserId,
+    setUserAsAdmin,
+    isUserAdmin
   }
 
   function userLoggedIn(userId) {
@@ -33,6 +36,15 @@ export const AuthContextProvider = (props) => {
   function isUserLoggedIn() {
     if (cookies.userId) return true
     else return false
+  }
+
+  function setUserAsAdmin() {
+    setCookie('isAdmin', true, { path: '/'})
+  }
+
+  function isUserAdmin() {
+    if (cookies.isAdmin) return true
+    else return false 
   }
 
   function getUserId() {
@@ -48,6 +60,8 @@ export const AuthContextProvider = (props) => {
       hideLoader()
       removeCookie('userId')
       removeUserCache()
+      setUserProfileData(null)
+      removeCookie('isAdmin')
       navigate("/auth", {replace:true})
     }).catch((error) => {
       hideLoader()

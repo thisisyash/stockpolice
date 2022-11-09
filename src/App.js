@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Authentication from './pages/Authentication';
 import { CommonProvider } from './contexts/CommonContext';
@@ -13,8 +12,8 @@ import Alerts from './pages/Alerts';
 import Profile from './pages/Profile';
 import UploadContacts from './pages/UploadContacts';
 import SendNotification from './pages/SendNotification';
-import ManageUsers from './pages/ManageUsers';
 import AdminPanel from './pages/AdminPanel';
+import Groups from './pages/Groups';
 
 function App() {
   return (
@@ -34,8 +33,8 @@ function App() {
 
               <Route path="/uploadContacts" element={<UploadContacts />}/>
               <Route path="/sendNotification" element={<SendNotification />}/>
-              <Route path="/manageUsers" element={<ManageUsers />}/>
               <Route path="/adminPanel" element={<AdminPanel />}/>
+              <Route path="/groups" element={<Groups />}/>
 
             </Route>
 

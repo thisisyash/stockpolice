@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, increment, orderBy, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, increment, orderBy, where, deleteDoc } from "firebase/firestore";
 import { db } from '../firebase'
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useContext } from "react";
@@ -18,14 +18,46 @@ export const setUserData = (async(userData) => {
   })
 })
 
+export const createNewUser = (async(userData) => {
+  return new Promise(async(resolve, reject) => {
+    const orderResp = await fetch("https://stockpolice-server.herokuapp.com/createNewuser", {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      "body": JSON.stringify({
+        userData : userData
+      })
+    }).then((response) => response.json())
+    .then(function(data) { 
+      resolve(data)
+    })
+    .catch((error) => {
+      console.log(error)
+      reject(error)
+    }); 
+  })
+})
+
+export const deleteUserApi = ((userData) => {
+  const userCollRef = collection(db, 'users')
+  return new Promise((resolve, reject)=> {
+    deleteDoc(doc(userCollRef, userData.mobileNo)).then((querySnapshot) => {
+      resolve(userData)
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
 
 // Should remove id and fetch from cookie
 export const getUserData = (async(id) => {
-  console.log("getting user data for : ", id)
+  // console.log("getting user data for : ", id)
   if (userDataCache) 
   {
     if (userDataCache.mobileNo == id) {
-      console.log("User cache exists : ", userDataCache)
+      // console.log("User cache exists : ", userDataCache)
       return userDataCache
     }
   }
@@ -100,11 +132,7 @@ export const sendNewNotification = (async(data) => {
         "content-type": "application/json",
         "accept": "application/json"
       },
-      "body": JSON.stringify({
-        title : data.title,
-        body : data.body,
-        description : data.description
-      })
+      "body": JSON.stringify(data)
     }).then((response) => response.json())
     .then(function(data) { 
       resolve(data)
@@ -117,7 +145,8 @@ export const sendNewNotification = (async(data) => {
 })
 
 
-export const registerToken = (async(tokenId) => {
+export const registerToken = (async(tokenId, groups) => {
+  console.log("=======register token====", tokenId, groups)
   return new Promise(async(resolve, reject) => {
     const orderResp = await fetch("https://stockpolice-server.herokuapp.com/subscribe", {
       "method": "POST",
@@ -126,7 +155,8 @@ export const registerToken = (async(tokenId) => {
         "accept": "application/json"
       },
       "body": JSON.stringify({
-        tokenId : tokenId
+        tokenId : tokenId,
+        groups : groups
       })
     }).then((response) => response.json())
     .then(function(data) { 
@@ -139,10 +169,14 @@ export const registerToken = (async(tokenId) => {
   })
 })
 
-export const getAlerts = (async() => {
+export const getAlerts = (async(fromTs, toTs) => {
   return new Promise((resolve, reject) => {
-    getDocs(query(collection(db, `alerts`), 
-                                  orderBy('timeStamp', 'desc'))).then((querySnapshot) => {
+    getDocs(query( collection(db, `alerts`),
+                   where('timeStamp', '<', toTs),
+                   where('timeStamp', '>', fromTs), 
+                   orderBy('timeStamp', 'desc')
+                 )
+            ).then((querySnapshot) => {
       let eventItems = []
       querySnapshot.forEach((doc) => {
         eventItems.push(doc.data())      
@@ -150,6 +184,47 @@ export const getAlerts = (async() => {
       resolve(eventItems)
     }).catch(()=> {
       reject([])
+    })
+  })
+})
+
+export const createNewGroup = (async(groupData) => {
+  const groupCollRef = collection(db, 'groups')
+  const groupId = doc(groupCollRef).id
+  groupData.groupId = groupId
+  return new Promise((resolve, reject)=> {
+    setDoc(doc(groupCollRef, groupId), groupData).then((querySnapshot) => {
+      resolve({})
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
+
+export const getGroups = (async() => {
+  return new Promise((resolve, reject) => {
+    getDocs(query(collection(db, `groups`))).then((querySnapshot) => {
+      let eventItems = []
+      querySnapshot.forEach((doc) => {
+        eventItems.push(doc.data())      
+      })
+      resolve(eventItems)
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
+
+export const getUsersByGroup = (async(groupId) => {
+  return new Promise((resolve, reject) => {
+    getDocs(query(collection(db, `users`),  where("groups", "array-contains", groupId))).then((querySnapshot) => {
+      let eventItems = []
+      querySnapshot.forEach((doc) => {
+        eventItems.push(doc.data())      
+      })
+      resolve(eventItems)
+    }).catch((error)=> {
+      reject(error)
     })
   })
 })
