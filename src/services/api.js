@@ -180,7 +180,6 @@ export const registerToken = (async(tokenId, groups) => {
 })
 
 export const getAlerts = (async(fromTs, toTs, groups) => {
-  console.log(groups)
   return new Promise((resolve, reject) => {
     getDocs(query( collection(db, `alerts`),
                    where('timeStamp', '<', toTs),

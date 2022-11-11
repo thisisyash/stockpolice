@@ -2,5 +2,8 @@
   "appId": "com.brandorigin.stockpolice",
   "appName": "StockPolice",
   "webDir": "build",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "server": {
+    "hostname":"stock-police.web.app"
+  }
 }

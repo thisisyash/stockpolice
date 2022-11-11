@@ -117,13 +117,13 @@ function Alerts() {
                     alert.alertItems.map((alert, newIndex) => {
                       return <Paper key={newIndex} className={classes.apptCont}>
                       <Box>
-                        <Box className={classes.apptLabel}>Notification</Box>
-                        <Box> {alert.body} </Box>
+                        <Box sx={{fontSize:20}}> {alert.body} </Box>
                       </Box>
         
                       <Box>
-                        <Box className={classes.apptLabel}>Alert Time</Box>
-                        <Box> {new Date(alert.timeStamp).toLocaleTimeString() || 'N/A'} </Box>
+                        <Box className={classes.apptLabel}> 
+                          {new Date(alert.timeStamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                        </Box>
                       </Box>
                   
                     </Paper>

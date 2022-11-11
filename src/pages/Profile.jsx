@@ -79,9 +79,9 @@ function Profile() {
             <Box sx={{mb:1, mt:1,}}>
               <b>Name : </b> {userData.userName}
             </Box>
-            <Box sx={{mb:1, mt:1,}}>
+            {/* <Box sx={{mb:1, mt:1,}}>
               <b>Email : </b> {userData.email}
-            </Box>
+            </Box> */}
             <Box sx={{mb:1, mt:1,}}>
               <b>Mobile : </b> {userData.mobileNo}
             </Box>

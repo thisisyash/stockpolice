@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { TextField, Button, Box } from '@mui/material'
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { makeStyles } from "@mui/styles";
 import { CommonContext } from '../contexts/CommonContext';
 import { auth } from '../firebase'
@@ -8,16 +8,13 @@ import { AuthContext } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { getUserData, registerToken, setUserData } from '../services/api';
 import { getFirebaseError } from '../services/error-codes';
-import Modal from '@mui/material/Modal';
 import stockpolice from '../assets/stockpolice.png'
 import {
-  ActionPerformed,
-  PushNotificationSchema,
   PushNotifications,
-  Token,
 } from '@capacitor/push-notifications';
-import { Capacitor } from '@capacitor/core';
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -161,7 +158,14 @@ function Authentication() {
 
 
       } else {
-        showAlert("User account is not registered. Please contact admin")
+        showAlert(<>
+          User account is not registered. 
+          <Button variant="outlined" sx={{marginTop:1}} 
+            onClick={() => whatsappMe("8374190096")}>
+            Contact Admin 
+            <WhatsAppIcon sx={{marginLeft:2}}/>
+          </Button>
+        </>)
       }
       hideLoader()
     })).catch((error) => {
@@ -251,6 +255,10 @@ function Authentication() {
     })
   }
 
+  const whatsappMe = (number) => {
+    window.open(`https://wa.me/91${number}`, '_blank')
+  }
+
   return (
     <div className={classes.outerCont}>
     <div className={classes.whiteBg}>
@@ -330,6 +338,7 @@ function Authentication() {
                   {...register("clientCode", {
                     required: "Required field"
                   })}
+                  inputProps={{ style: { textTransform: "uppercase" } }}
                   error={Boolean(errors?.clientCode)}
                   helperText={errors?.clientCode?.message}
                 />
