@@ -42,6 +42,13 @@ export const createNewUser = (async(userData) => {
 
 export const deleteUserApi = ((userData, groupName) => { 
   const userCollRef = collection(db, 'users')
+
+  unRegisterToken(userData.deviceToken, [groupName]).then(async()=> {
+    console.log("Removing device from notifications : ", userData.deviceToken, groupName)
+  }).catch(async(error) => {
+    console.log("Some unexpected error occured")
+  })
+
   if (userData.groups.length == 1) {
     return new Promise((resolve, reject)=> {
       deleteDoc(doc(userCollRef, userData.mobileNo)).then((querySnapshot) => {

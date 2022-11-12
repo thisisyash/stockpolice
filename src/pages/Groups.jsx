@@ -38,7 +38,7 @@ const styles = {
   },
   groupsListCont : {
     display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
+    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: 20,
     padding:'20px 0'
   },
