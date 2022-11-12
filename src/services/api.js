@@ -43,6 +43,7 @@ export const createNewUser = (async(userData) => {
 export const deleteUserApi = ((userData, groupName) => { 
   const userCollRef = collection(db, 'users')
 
+  //TODO - should handle error responses properly
   unRegisterToken(userData.deviceToken, [groupName]).then(async()=> {
     console.log("Removing device from notifications : ", userData.deviceToken, groupName)
   }).catch(async(error) => {
