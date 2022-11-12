@@ -4,14 +4,14 @@ import { signOut } from "firebase/auth";
 import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom';
 import { CommonContext } from './CommonContext';
-import { removeUserCache } from '../services/api';
+import { removeUserCache, unRegisterToken } from '../services/api';
 
 export const AuthContext = React.createContext()
 
 export const AuthContextProvider = (props) => {
 
   const [userProfileData, setUserProfileData] = useState({})
-  const [cookies, setCookie, removeCookie] = useCookies(['userId'])
+  const [cookies, setCookie, removeCookie] = useCookies(['userId', 'isAdmin', 'deviceToken'])
   // const [isAdmin, setIsAdmin] = useState(false)
   const { showLoader, hideLoader, showAlert } = useContext(CommonContext)
 
@@ -25,7 +25,18 @@ export const AuthContextProvider = (props) => {
     isUserLoggedIn,
     getUserId,
     setUserAsAdmin,
-    isUserAdmin
+    isUserAdmin,
+    setDeviceTokenCookie,
+    getDeviceTokenCookie
+  }
+
+  function setDeviceTokenCookie(token) {
+    setCookie('deviceToken', token.replace(/[^a-zA-Z0-9]/g, ""), { path: '/'})
+  }
+
+  function getDeviceTokenCookie() {
+    if (cookies.deviceToken) return cookies.deviceToken
+    else return null
   }
 
   function userLoggedIn(userId) {
@@ -54,15 +65,34 @@ export const AuthContextProvider = (props) => {
       logout()
   }
 
-  function logout() {
+  function logout(data) {
+    if (data) {
+      if (data.multiLoginError) {
+        showAlert("Account logged in from multiple devices. Please login again.")
+      }
+    }
     showLoader()
     signOut(auth).then(() => {
-      hideLoader()
-      removeCookie('userId')
+      
       removeUserCache()
       setUserProfileData(null)
+
+      removeCookie('userId')
       removeCookie('isAdmin')
-      navigate("/auth", {replace:true})
+      removeCookie('deviceToken')
+
+      if (data.deviceToken) {
+        unRegisterToken(data.deviceToken, data.groups).then(async()=> {
+          console.log("Removing device from notifications : ", data.deviceToken, data.groups)
+          hideLoader()
+          navigate("/auth", {replace:true})
+        }).catch(async(error) => {
+          showAlert("Some unexpected error occured")
+        })
+      } else {
+        hideLoader()
+        navigate("/auth", {replace:true})
+      }
     }).catch((error) => {
       hideLoader()
       showAlert("Failed to logout")

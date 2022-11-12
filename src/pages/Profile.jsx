@@ -52,11 +52,20 @@ function Profile() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getUserData(getUserId()).then((response => {
+    getUserData(getUserId(), true).then((response => {
+      if (response.multiLoginError) {
+          logout(response)
+          return
+      }
       setUserData(response)
       setLoading(false)
     }))
   }, [])
+
+  const logoutUser = () => {
+    console.log("====", userData)
+    logout({deviceToken : userData.deviceToken, groups : userData.groups})
+  }
 
   return (
     <>
@@ -95,7 +104,8 @@ function Profile() {
               <b>Mobile : </b> {userData.mobileNo}
             </Box>
             <Box sx={{display:'flex'}}>
-              <Button variant="outlined" size="medium" onClick={() => logout()}>
+              <Button variant="outlined" size="medium" 
+                onClick={logoutUser}>
                 Logout
               </Button>
             </Box>

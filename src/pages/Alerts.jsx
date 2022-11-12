@@ -42,9 +42,10 @@ function Alerts() {
   const classes = useStyles()
   const [loading, setLoading] = useState(true)
   const [alerts, setAlerts] = useState([])
-  const {getUserId} = useContext(AuthContext)
+  const {getUserId, logout} = useContext(AuthContext)
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const [fromTs, setFromTs] = useState(new Date(new Date().setHours(0,0,0,0)).getTime())
+  const [pushNotiRegistered, setPushNotiRegistered] = useState(false)
 
 
   // const [groups, setGroups] = useState({})
@@ -52,16 +53,19 @@ function Alerts() {
   useEffect(() => {
     
     getDateWiseAlerts(fromTs)
-    
+  }, [])
+
+  const addPushNotiListener = (userGroups) => {
     //TODO - Optimize this logic by checking the current page
     PushNotifications.addListener('pushNotificationReceived',
       (notification) => {
+        setPushNotiRegistered(true)
         showAlert(<NotiAlert props={notification}/>)
         setTimeout(() => {
           //Referesh the alerts data after receiving the notification
           setLoading(true)
           setFromTs(new Date(new Date().setHours(0,0,0,0)).getTime())
-          getAlerts(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime()).then((response => {
+          getAlerts(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime(), userGroups).then((response => {
             setAlerts([{
               timeStamp : fromTs,
               alertItems : response
@@ -70,11 +74,16 @@ function Alerts() {
           }))
         }, 1000)
       }
-    );
-  }, [])
+    )
+  }
 
   const getDateWiseAlerts = (fromTs) => {
-    getUserData(getUserId()).then((resp) => {
+    getUserData(getUserId(), true).then((resp) => {
+      if (resp.multiLoginError) {
+        logout(resp)
+        return
+      }
+      if (!pushNotiRegistered) addPushNotiListener(resp.groups)
       getAlerts(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime(), resp.groups).then((response => {
         let prevAlerts = Array.from(alerts)
         prevAlerts.push(

@@ -63,13 +63,17 @@ function HomePage() {
 
   const navigate = useNavigate()
   const [userData, setUserData] = useState({})
-  const {getUserId} = useContext(AuthContext)
+  const {getUserId, getDeviceTokenCookie, logout} = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
 
 
   useEffect(() => {
-    getUserData(getUserId()).then((response => {
+    getUserData(getUserId(), true).then((response => {
+      if (response.multiLoginError) {
+          logout(response)
+          return
+      }
       setUserData(response)
       setLoading(false)
     }))

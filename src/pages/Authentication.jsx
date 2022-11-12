@@ -6,7 +6,7 @@ import { CommonContext } from '../contexts/CommonContext';
 import { auth } from '../firebase'
 import { AuthContext } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { getUserData, registerToken, setUserData } from '../services/api';
+import { getUserData, registerToken, setUserData, unRegisterToken, updateUserData } from '../services/api';
 import { getFirebaseError } from '../services/error-codes';
 import stockpolice from '../assets/stockpolice.png'
 import {
@@ -75,24 +75,15 @@ function Authentication() {
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false)
 
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
-  const {userLoggedIn, setUserProfileData, isUserLoggedIn, setUserAsAdmin} = useContext(AuthContext)
+  const {userLoggedIn, setUserProfileData, isUserLoggedIn, setUserAsAdmin, setDeviceTokenCookie} = useContext(AuthContext)
 
   const { register, handleSubmit, control, reset, formState : {errors:errors} } = useForm()
-  const { register : register2, handleSubmit : handleSubmit2, reset : reset2, formState : {errors:errors2} } = useForm()
   const { register : registerOtp, handleSubmit : submitOtp, reset : resetOtp, formState : {errors:errorsOtp} } = useForm()
 
   const navigate = useNavigate()
 
   useEffect(() => {
-  //   window.recaptchaVerifier = new RecaptchaVerifier(
-  //     "recaptcha-container", {
-  //         size: "invisible",
-  //         callback: function(response) {
-  //             console.log("Captcha Resolved");
-  //         },
-  //         defaultCountry: "IN",
-  //     }
-  // );
+
     if(isUserLoggedIn()) {
       navigate("/", {replace:true})
     }
@@ -105,7 +96,6 @@ function Authentication() {
           console.log('Error', error)
       })
     }
-
   }, [showOtp])
 
   function setUpRecaptha(number) {
@@ -122,40 +112,17 @@ function Authentication() {
     showLoader()
     setMobileNo(data.mobileNo)
 
-    getUserData(data.mobileNo).then((response => {
-      console.log(response, data)
+    getUserData(data.mobileNo, false).then((response => {
 
       //User created
       if (response) {
-
-        if (response.clientCode !== data.clientCode) {
+        if (response.clientCode != data.clientCode.toUpperCase()) {
           showAlert("Incorrect client code")
           hideLoader()
           return
         }
-
         setUserProfile(response)
         setShowOtp(true)
-        // const appVerifier = window.recaptchaVerifier;
-
-        // auth
-        //     .signInWithPhoneNumber(data.mobileNo, appVerifier)
-        //     .then((confirmationResult) => {
-        //         // SMS sent. Prompt user to type the code from the message, then sign the
-        //         // user in with confirmationResult.confirm(code).
-        //         console.log("otp sent");
-        //         setShowOtp(true);
-        //         hideLoader()
-        //         window.confirmationResult = confirmationResult;
-        //     })
-        //     .catch((error) => {
-        //         // Error; SMS not sent
-        //         // ...
-        //         hideLoader()
-        //         showAlert(error.message);
-        //     });
-
-
       } else {
         showAlert(<>
           User account is not registered. 
@@ -177,35 +144,49 @@ function Authentication() {
 
     PushNotifications.requestPermissions().then(result => {
       if (result.receive === 'granted') {
-        console.log('push notification request granted')
-        // Register with Apple / Google to receive push via APNS/FCM
         PushNotifications.register();
       } else {
-        console.log("============",'push notification error')
         // Show some error
       }
-    });
+    })
 
     // On success, we should be able to receive notifications
     PushNotifications.addListener('registration',
       (token) => {
+
         setDeviceToken(token.value)
-        console.log("===============", token.value, groups)
+        updateUserData({deviceToken : token.value}, userProfile.mobileNo).then(() => {
+          setDeviceTokenCookie(token.value)  
+        }).catch((error) => {
+          showAlert("Failed to activate notifications. Please contact admin.")
+        })
+
+        if (userProfile.deviceToken && userProfile.deviceToken != token.value) {
+
+          unRegisterToken(userProfile.deviceToken, groups).then(async()=> {
+            console.log("Removing device from notifications : ", userProfile.deviceToken)
+            hideLoader()
+          }).catch(async(error) => {
+            hideLoader()
+            showAlert("Some unexpected error occured")
+          })
+        }
+
         registerToken(token.value, groups).then(async()=> {
-          console.log("=========push token registration sucess")
+          console.log("Subscribing device for notifications : ", token.value)
           hideLoader()
         }).catch(async(error) => {
-          console.log("=========push token registration failed", error)
           hideLoader()
+          showAlert("Some unexpected error occured")
         })
-        console.log("===============", 'Push registration success, token: ' + token.value);
+
       }
     );
 
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError',
       (error) => {
-        alert("=================", 'Error on registration: ' + JSON.stringify(error));
+
       }
     );
   }
@@ -225,33 +206,6 @@ function Authentication() {
       hideLoader()
       showAlert(getFirebaseError(err.message))
     }
-  }
-
-  const signupUser = (data) => {
-    console.log("signup user")
-    showLoader()
-    const userData = {
-      uid          : mobileNo,
-      userName     : data.userName,
-      userUrlId    : data.userName.split(' ').join('-'),
-      email        : data.email,
-      createdAt    : Date.now(),
-      isNotiEnabled : isNotiEnabled || false,
-      isActive     : isActive || false,
-      isProfileCompleted : true,
-      mobileNo     : mobileNo,
-      deviceToken  : deviceToken
-    }
-
-    setUserData(userData).then(() => {
-      setUserProfileData(userData)
-      userLoggedIn(userData.mobileNo)
-      hideLoader()
-      navigate('/', {replace:true})
-    }).catch((error) => {
-      hideLoader()
-      showAlert(getFirebaseError(error.code))
-    })
   }
 
   const whatsappMe = (number) => {
@@ -287,6 +241,7 @@ function Authentication() {
                       label="OTP Number"
                       variant="outlined"
                       fullWidth
+                      type="number"
                       autoComplete='off'
                       name="otp"
                       {...registerOtp("otp", {
@@ -313,6 +268,7 @@ function Authentication() {
                   variant="outlined"
                   fullWidth
                   autoComplete='off'
+                  type="number"
                   name="mobileNo"
                   {...register("mobileNo", {
                     required: "Required field",
@@ -353,62 +309,7 @@ function Authentication() {
       </>
       :
       <Box p={2}>
-        <h2 className={classes.center}>Welcome to StockPolice, Please update your details</h2>
-        <form onSubmit={handleSubmit2(signupUser)} key={2}>
 
-        {/* <Box mb={3}>
-            <TextField
-              label="Mobile Number"
-              variant="outlined"
-              fullWidth
-              disabled
-              defaultValue={mobileNo}
-              autoComplete='off'
-              name="mobileNo"
-              {...register2("mobileNo")}
-            />
-          </Box> */}
-
-          <Box mb={3} mt={5}>
-            <TextField
-              placeholder="Enter your full name"
-              label="Full Name"
-              variant="outlined"
-              fullWidth
-              autoComplete='off'
-              name="userName"
-              {...register2("userName", {
-                required: "Required field"
-              })}
-              error={Boolean(errors2?.userName)}
-              helperText={errors2?.userName?.message}
-            />
-          </Box>
-
-          <Box mb={3}>
-            <TextField
-              placeholder="Enter your email"
-              label="Email ID"
-              variant="outlined"
-              fullWidth
-              autoComplete='off'
-              name="email"
-              {...register2("email", {
-                required: "Required field",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "Invalid email address",
-                },
-              })}
-              error={Boolean(errors2?.email)}
-              helperText={errors2?.email?.message}
-            />
-          </Box>
-
-          <Button type="submit" variant="contained" color="primary" fullWidth id='sign-in-button'>
-            Continue
-          </Button>
-        </form>
       </Box>
     }
     </div>

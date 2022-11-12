@@ -63,20 +63,29 @@ export const deleteUserApi = ((userData, groupName) => {
 })
 
 // Should remove id and fetch from cookie
-export const getUserData = (async(id) => {
+export const getUserData = (async(id, verifyToken) => {
   // console.log("getting user data for : ", id)
-  if (userDataCache) 
-  {
-    if (userDataCache.mobileNo == id) {
-      // console.log("User cache exists : ", userDataCache)
-      return userDataCache
-    }
-  }
+  // if (userDataCache) 
+  // {
+  //   if (userDataCache.mobileNo == id) {
+  //     // console.log("User cache exists : ", userDataCache)
+  //     return userDataCache
+  //   }
+  // }
   
   return new Promise((resolve, reject)=> {
     getDoc(doc(db, `users/${id}`)).then((querySnapshot) => {
+
+      const deviceToken = document.cookie.replace(/(?:(?:^|.*;\s*)deviceToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+      if (verifyToken && deviceToken && (deviceToken != querySnapshot.data().deviceToken.replace(/[^a-zA-Z0-9]/g, ""))) {
+        resolve({
+          multiLoginError :true
+        })
+      }
+
       resolve(querySnapshot.data())
       //TODO - remove
+
       userDataCache = querySnapshot.data()
     }).catch((error)=> {
       reject(null)
@@ -178,6 +187,33 @@ export const registerToken = (async(tokenId, groups) => {
     }); 
   })
 })
+
+
+export const unRegisterToken = (async(tokenId, groups) => {
+  return new Promise(async(resolve, reject) => {
+    const orderResp = await fetch("https://stockpolice-server.herokuapp.com/unsubscribe", {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      "body": JSON.stringify({
+        tokenId : tokenId,
+        groups : groups
+      })
+    }).then((response) => response.json())
+    .then(function(data) { 
+      resolve(data)
+    })
+    .catch((error) => {
+      console.log(error)
+      reject(error)
+    }); 
+  })
+})
+
+
+
 
 export const getAlerts = (async(fromTs, toTs, groups) => {
   return new Promise((resolve, reject) => {
