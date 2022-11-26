@@ -153,6 +153,11 @@ export const uploadImage = (async(fileData, fileMetadata, fileName, path) => {
 })
 
 export const sendNewNotification = (async(data) => {
+
+  const alertCollRef = collection(db, 'alerts'),
+        alertId = doc(alertCollRef).id
+  data.uid = alertId
+
   return new Promise(async(resolve, reject) => {
     const orderResp = await fetch("https://stockpolice-server.herokuapp.com/sendNotification", {
       "method": "POST",
@@ -278,6 +283,43 @@ export const getUsersByGroup = (async(groupId) => {
         eventItems.push(doc.data())      
       })
       resolve(eventItems)
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
+
+export const editAlertApi = (async(alertData) => {
+    const alertCollRef = collection(db, 'alerts')
+    return new Promise((resolve, reject)=> {
+      updateDoc(doc(alertCollRef, alertData.uid), {body : alertData.newBody}).then((querySnapshot) => {
+        resolve({})
+      }).catch((error)=> {
+        reject(error)
+      })
+    })
+})
+
+export const saveVideosApi = (async(videos) => {
+  const globalCollRef = collection(db, 'globals')
+    return new Promise((resolve, reject)=> {
+      updateDoc(doc(globalCollRef,'globals'), {videoLinks : videos}).then((querySnapshot) => {
+        resolve({})
+      }).catch((error)=> {
+        console.log(error)
+        reject(error)
+      })
+    })
+})
+
+export const getGlobals = (async() => {
+  return new Promise((resolve, reject) => {
+    getDocs(query(collection(db, `globals`))).then((querySnapshot) => {
+      let eventItems = []
+      querySnapshot.forEach((doc) => {
+        eventItems.push(doc.data())      
+      })
+      resolve(eventItems[0])
     }).catch((error)=> {
       reject(error)
     })

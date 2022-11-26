@@ -1,10 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { getAlerts, getUserData } from '../services/api'
+import { editAlertApi, getAlerts, getUserData } from '../services/api'
 import { Button, Box, Paper, TextField, Grid} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
+import { useForm } from "react-hook-form";
+import Modal from '@mui/material/Modal';
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -34,6 +36,25 @@ const useStyles = makeStyles((theme) => ({
     display:'flex',
     alignItems:'center',
     justifyContent:'center'
+  },
+  modalStyle : {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90vw',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    display:'flex',
+    justifyContent:'center'
+  },
+  appointmentBox : {
+    background : 'white',
+    padding:'20px',
+    borderRadius:'5px',
+    width:'80vw',
+    maxWidth:'700px'
   }
 }));
 
@@ -42,18 +63,50 @@ function Alerts() {
   const classes = useStyles()
   const [loading, setLoading] = useState(true)
   const [alerts, setAlerts] = useState([])
-  const {getUserId, logout} = useContext(AuthContext)
+  const {getUserId, logout, isUserAdmin} = useContext(AuthContext)
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const [fromTs, setFromTs] = useState(new Date(new Date().setHours(0,0,0,0)).getTime())
   const [pushNotiRegistered, setPushNotiRegistered] = useState(false)
-
+  const [editModal, setEditModal] = React.useState(false)
+  const { register : registerEditAlert, handleSubmit : submitAlertEdit, reset : resetEditAlert, formState : {errors:editErrors} } = useForm()
+  const [selectedAlert, setSelectedAlert] = useState(null)
 
   // const [groups, setGroups] = useState({})
 
   useEffect(() => {
     
-    getDateWiseAlerts(fromTs)
+    getDateWiseAlerts(fromTs, true)
   }, [])
+
+  const editAlert = (data) => {
+    const alertData = {
+      uid : selectedAlert.uid,
+      newBody : data.alertData
+    }
+    showLoader()
+    editAlertApi(alertData).then(() => {
+      showSnackbar("Alert edited successfully")
+      onEditAlertClose()
+      hideLoader()
+      setLoading(true)
+      getDateWiseAlerts(new Date(new Date().setHours(0,0,0,0)).getTime(), true)
+    }).catch(() => {
+      showAlert("Failed to update alert")
+      onEditAlertClose()
+      hideLoader()
+    })
+  }
+
+  const onEditAlertClose = () => {    
+    setSelectedAlert(null)
+    setEditModal(false)
+    resetEditAlert()
+  }
+
+  const selectAlertToEdit = (alert) => {
+    setSelectedAlert(alert)
+    setEditModal(true)
+  }
 
   const addPushNotiListener = (userGroups) => {
     //TODO - Optimize this logic by checking the current page
@@ -77,7 +130,7 @@ function Alerts() {
     )
   }
 
-  const getDateWiseAlerts = (fromTs) => {
+  const getDateWiseAlerts = (fromTs, reset) => {
     getUserData(getUserId(), true).then((resp) => {
       if (resp.multiLoginError) {
         logout(resp)
@@ -85,7 +138,7 @@ function Alerts() {
       }
       if (!pushNotiRegistered) addPushNotiListener(resp.groups)
       getAlerts(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime(), resp.groups).then((response => {
-        let prevAlerts = Array.from(alerts)
+        let prevAlerts = reset ? []  : Array.from(alerts)
         prevAlerts.push(
           {
             timeStamp : fromTs,
@@ -102,11 +155,56 @@ function Alerts() {
   const loadMoreAlerts = () => {
     showLoader()
     setFromTs(new Date(new Date(fromTs).getTime() - 60 * 60 * 24 * 1000).getTime())
-    getDateWiseAlerts(new Date(new Date(fromTs).getTime() - 60 * 60 * 24 * 1000).getTime())
+    getDateWiseAlerts(new Date(new Date(fromTs).getTime() - 60 * 60 * 24 * 1000).getTime(), false)
   }
 
   return (
     <>
+    <Modal
+      open={editModal}
+      onClose={onEditAlertClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description">
+      <Box className={classes.modalStyle}>
+        <Box className={classes.appointmentBox}>
+        <h4>Edit Alert</h4>
+
+          <form onSubmit={submitAlertEdit(editAlert)}>
+            <Box mb={3}>
+              <TextField
+                placeholder="Alert Data"
+                label="Alert Data"
+                variant="outlined"
+                fullWidth
+                multiline
+                autoFocus
+                rows={4}
+                autoComplete='off'
+                defaultValue={selectedAlert?.body}
+                name="alertData"
+                {...registerEditAlert("alertData", {
+                  required: "Required field"
+                })}
+                error={Boolean(editErrors?.alertData)}
+                helperText={editErrors?.alertData?.message}
+              />
+            </Box>
+            
+            <Box>
+              <Button variant="outlined" sx={{marginRight:2}}
+                onClick={onEditAlertClose}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="contained" color="primary">
+                Submit
+              </Button>
+            </Box>
+            
+          </form>
+        </Box>
+      </Box>
+    </Modal>
+
     {
       loading ? 
       <ComponentLoader /> :
@@ -133,6 +231,15 @@ function Alerts() {
                         <Box className={classes.apptLabel}> 
                           {new Date(alert.timeStamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
                         </Box>
+                        {
+                          isUserAdmin() ? 
+                          <Box mt={2}>
+                            <Button variant="contained" onClick={() => selectAlertToEdit(alert)}>
+                              Edit
+                            </Button>
+                          </Box> : null
+                        }
+                        
                       </Box>
                   
                     </Paper>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import ContactsIcon from '@mui/icons-material/Contacts';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 
 const styles = {
   contentCard : {
@@ -83,6 +84,16 @@ function AdminPanel() {
               fontSize='large'/>
               <Button>
                 Groups
+              </Button>
+            </Paper>
+          </Grid>
+
+          <Grid item xs>
+            <Paper style={styles.contentCard} onClick={() => navigate('/videos')}>
+              <SubscriptionsIcon 
+              fontSize='large'/>
+              <Button>
+                Videos
               </Button>
             </Paper>
           </Grid>

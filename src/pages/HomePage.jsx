@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { Button, Box, Card, Paper, Grid } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { getUserData } from '../services/api'
+import { getGlobals, getUserData } from '../services/api'
 import { AuthContext } from '../contexts/AuthContext'
 import ComponentLoader from '../components/ComponentLoader'
 import stockpolicelogo from '../assets/stockpolice.png'
@@ -66,7 +66,7 @@ function HomePage() {
   const {getUserId, getDeviceTokenCookie, logout} = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
-
+  const [videos, setVideos] = useState([])
 
   useEffect(() => {
     getUserData(getUserId(), true).then((response => {
@@ -77,6 +77,12 @@ function HomePage() {
       setUserData(response)
       setLoading(false)
     }))
+
+    getGlobals().then((resp) => {
+      setVideos(resp.videoLinks)
+    }).catch(() => {
+      showAlert("Failed to fetch videos", "error")
+    })
   }, [])
 
   return (
@@ -104,24 +110,29 @@ function HomePage() {
         </Box>
         <Box>
           <h2>Tutorials</h2>
-          <Paper style={styles.videoCont}>
-            <h3>How to execute Zero Cost Trades?</h3>
-            <iframe width="99%"
-              src="https://www.youtube.com/embed/yjN4bwZbtxE">
-            </iframe>
-          </Paper>
-          <Paper style={styles.videoCont}>
-            <h3>How to execute trades using Robo order ?</h3>
-            <iframe width="99%"
-              src="https://www.youtube.com/embed/fwAU1NTuSOU">
-            </iframe>
-          </Paper>
-          <Paper style={styles.videoCont}>
-            <h3>High Profit with Robo Trade</h3>
-            <iframe width="99%"
-              src="https://www.youtube.com/embed/eHn5jaBC_Qs">
-            </iframe>
-          </Paper>
+          {
+            videos.length ? 
+            <Box>
+              {
+                videos.map((video, index) => {
+                  return(
+                  <Paper style={styles.videoCont} key={index}>
+                    {/* <h3>How to execute Zero Cost Trades?</h3> */}
+                    <iframe width="99%"
+                      src={video}>
+                    </iframe>
+                  </Paper>
+                  )
+                })
+              }
+            </Box>
+            :
+            <Box sx={{margin:'10px 0'}}>
+              <h2>
+                No videos found
+              </h2>
+            </Box>
+          }
         </Box>
       </Box>
     }
