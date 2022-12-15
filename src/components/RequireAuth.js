@@ -32,14 +32,12 @@ function RequireAuth({props}) {
     .matchMedia("(min-width: 768px)")
     .addEventListener('change', e => setIsDesktop( e.matches ))
 
-
     let resizeObserver
     setTimeout(() => {
    
       const chatBot = document.getElementById('tiledeskdiv')
 
       resizeObserver = new ResizeObserver(() => {
-        // Do what you want to do when the size of the element changes
         if (chatBot.clientHeight < 200) {
           chatBot.setAttribute("style", "bottom:6vh !important;")
         } else {
@@ -47,12 +45,9 @@ function RequireAuth({props}) {
         }
       });
       resizeObserver.observe(chatBot);
-      
+      return () => resizeObserver.disconnect();
     }, 1000)
-    return () => resizeObserver.disconnect();
   }, []);
-
-  
 
   if (isUserLoggedIn()) {
     return <>
