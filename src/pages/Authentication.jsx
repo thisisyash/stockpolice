@@ -84,6 +84,10 @@ function Authentication() {
 
   useEffect(() => {
 
+    //Remove chatbot on login page
+    const chatBot = document.getElementById("tiledesk-container")
+    if (chatBot) chatBot.remove()
+    
     if(isUserLoggedIn()) {
       navigate("/", {replace:true})
     }

@@ -20,7 +20,7 @@ export const setUserData = (async(userData) => {
 
 export const createNewUser = (async(userData) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.herokuapp.com/createNewuser", {
+    const orderResp = await fetch("https://stockpolice-server.onrender.com/createNewuser", {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -159,7 +159,7 @@ export const sendNewNotification = (async(data) => {
   data.uid = alertId
 
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.herokuapp.com/sendNotification", {
+    const orderResp = await fetch("https://stockpolice-server.onrender.com/sendNotification", {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -180,7 +180,7 @@ export const sendNewNotification = (async(data) => {
 
 export const registerToken = (async(tokenId, groups) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.herokuapp.com/subscribe", {
+    const orderResp = await fetch("https://stockpolice-server.onrender.com/subscribe", {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -204,7 +204,7 @@ export const registerToken = (async(tokenId, groups) => {
 
 export const unRegisterToken = (async(tokenId, groups) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.herokuapp.com/unsubscribe", {
+    const orderResp = await fetch("https://stockpolice-server.onrender.com/unsubscribe", {
       "method": "POST",
       "headers": {
         "content-type": "application/json",

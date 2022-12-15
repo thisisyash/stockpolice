@@ -69,6 +69,7 @@ function HomePage() {
   const [videos, setVideos] = useState([])
 
   useEffect(() => {
+
     getUserData(getUserId(), true).then((response => {
       if (response.multiLoginError) {
           logout(response)
