@@ -5,14 +5,23 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #eaeaea;
+  /* background: #eaeaea; */
+  background: black;
+  color: white;
 
+}
 
+.MuiPaper-root {
+  background: black !important;
+  border: 2px solid white;
+  color: white !important;
 }
 
 @media (min-width:768px)  { 
   body {
-    background:white !important
+    /* background:white !important */
+    background: black;
+    color: white;
   }
  
 }
