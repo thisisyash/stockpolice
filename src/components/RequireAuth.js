@@ -33,21 +33,21 @@ function RequireAuth({props}) {
     .addEventListener('change', e => setIsDesktop( e.matches ))
     
     
-    // let resizeObserver
-    // setTimeout(() => {
+    let resizeObserver
+    setTimeout(() => {
    
-    //   const chatBot = document.getElementById('tiledeskdiv')
+      const chatBot = document.getElementById('tiledeskdiv')
 
-    //   resizeObserver = new ResizeObserver(() => {
-    //     if (chatBot.clientHeight < 200) {
-    //       chatBot.setAttribute("style", "bottom:6vh !important;")
-    //     } else {
-    //       chatBot.setAttribute("style", "bottom:0vh !important;")
-    //     }
-    //   })
-    //   resizeObserver.observe(chatBot);
-    //   return () => resizeObserver.disconnect();
-    // }, 2000)
+      resizeObserver = new ResizeObserver(() => {
+        if (chatBot.clientHeight < 200) {
+          chatBot.setAttribute("style", "bottom:6vh !important;")
+        } else {
+          chatBot.setAttribute("style", "bottom:0vh !important;")
+        }
+      })
+      resizeObserver.observe(chatBot);
+      return () => resizeObserver.disconnect();
+    }, 2000)
   }, []);
 
   if (isUserLoggedIn()) {
