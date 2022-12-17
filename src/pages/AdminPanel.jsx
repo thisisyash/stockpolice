@@ -5,6 +5,7 @@ import ContactsIcon from '@mui/icons-material/Contacts';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 const styles = {
   contentCard : {
@@ -50,6 +51,7 @@ const styles = {
 
 function AdminPanel() {
 
+  // window.Tiledesk('hide')
   const navigate = useNavigate()
 
   return (
@@ -94,6 +96,16 @@ function AdminPanel() {
               fontSize='large'/>
               <Button>
                 Videos
+              </Button>
+            </Paper>
+          </Grid>
+
+          <Grid item xs>
+            <Paper style={styles.contentCard} onClick={() => navigate('/messages')}>
+              <QuestionAnswerIcon 
+              fontSize='large'/>
+              <Button>
+                Messages
               </Button>
             </Paper>
           </Grid>

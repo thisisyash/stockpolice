@@ -15,6 +15,7 @@ import SendNotification from './pages/SendNotification';
 import AdminPanel from './pages/AdminPanel';
 import Groups from './pages/Groups';
 import Videos from './pages/Videos';
+import Messages from './pages/Messages';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               <Route path="/adminPanel" element={<AdminPanel />}/>
               <Route path="/groups" element={<Groups />}/>
               <Route path="/videos" element={<Videos />}/>
+              <Route path="/messages" element={<Messages />}/>
 
             </Route>
 
