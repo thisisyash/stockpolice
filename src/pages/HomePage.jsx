@@ -41,7 +41,9 @@ const styles = {
   },
   logoImg :{
     height: '150px',
-    width:'150px'
+    width:'150px',
+    boxShadow:'1px 1px 25px -5px #00e6ff',
+    marginBottom:'15px'
   },
   center : {
     display:'flex',

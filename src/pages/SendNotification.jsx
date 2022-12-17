@@ -4,10 +4,12 @@ import { makeStyles } from "@mui/styles";
 import { useForm, Controller } from "react-hook-form";
 import { AuthContext } from '../contexts/AuthContext';
 import { CommonContext } from '../contexts/CommonContext';
-import { getGroups, sendNewNotification } from '../services/api';
+import { getGroups, getInputTheme, sendNewNotification } from '../services/api';
 import ComponentLoader from '../components/ComponentLoader';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 
 const useStyles = makeStyles((theme) => ({
   center : {
@@ -26,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
   },
   notiCont : {
     maxWidth:'800px'
-  }
+  },
+  ...getInputTheme()
 }))
 
 function SendNotification() {
@@ -82,9 +85,12 @@ function SendNotification() {
           {
             groups?.length ?
               <Box sx={{ maxWidth: 120 }}>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{width:'50vw', border:'1px solid white', borderRadius:'5px'}}>
                   <Select
                     autoWidth
+                    IconComponent={() => (
+                      <ArrowDropDownIcon sx={{color:'white'}} />
+                    )}
                     value={selectedGroup}
                     onChange={handleChange}>
                     {
@@ -130,6 +136,7 @@ function SendNotification() {
                     variant="outlined"
                     fullWidth
                     name="body"
+                    className={classes.inputBox}
                     multiline
                     rows={4}
                     {...register("body",{

@@ -31,3 +31,32 @@ code {
     monospace;
 }
 
+.MuiButtonBase-root {
+  color: white !important;
+}
+
+.MuiButtonBase-root .Mui-selected {
+  color: #30bbff !important;
+}
+
+.Mui-selected .MuiSvgIcon-root {
+  color: #30bbff !important;
+}
+
+.MuiButton-root {
+  border: 1px solid #30bbff !important;
+}
+
+/* .MuiInputBase-input {
+  border: 1px solid white !important;
+  color: white !important;
+  border-radius: 5px !important;
+} */
+
+  .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline{
+    borderColor: "white"
+  }
+
+.MuiTableCell-root {
+  color: white !important;
+}

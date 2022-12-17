@@ -23,7 +23,7 @@ function AlertBox() {
           Alert
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" sx={{color:'white'}}>
             {alertText}
           </DialogContentText>
         </DialogContent>

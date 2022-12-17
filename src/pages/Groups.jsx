@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react'
-import { Button, Box, Paper, TextField, Checkbox} from '@mui/material'
+import { Button, Box, Paper, TextField } from '@mui/material'
 import { CommonContext } from '../contexts/CommonContext'
 import ComponentLoader from '../components/ComponentLoader'
 import { useForm } from "react-hook-form";
 import Modal from '@mui/material/Modal';
-import { createNewGroup, createNewUser, deleteUserApi, getGroups, getUsersByGroup } from '../services/api';
+import { createNewGroup, createNewUser, deleteUserApi, getGroups, getInputTheme, getUsersByGroup } from '../services/api';
 import { getFirebaseError } from '../services/error-codes';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +15,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { updateUserData  } from '../services/api';
+import { makeStyles } from "@mui/styles";
+
 
 const styles = {
   modalStyle : {
@@ -30,7 +32,8 @@ const styles = {
     justifyContent:'center'
   },
   appointmentBox : {
-    background : 'white',
+    background : 'black',
+    color:'white',
     padding:'20px',
     borderRadius:'5px',
     width:'80vw',
@@ -60,9 +63,13 @@ const styles = {
     marginBottom:0
   }
 }
+const useStyles = makeStyles((theme) => ({
+  ...getInputTheme()
+}))
 
 function Groups() {
 
+  const classes = useStyles()
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const [loading, setLoading] = useState(true)
   const [groups, setGroups] = useState([])
@@ -221,6 +228,7 @@ function Groups() {
                 variant="outlined"
                 fullWidth
                 autoFocus
+                className={classes.inputBox}
                 autoComplete='off'
                 name="groupName"
                 {...registerGroup("groupName", {
@@ -266,6 +274,7 @@ function Groups() {
                 label="User Name"
                 variant="outlined"
                 fullWidth
+                className={classes.inputBox}
                 autoFocus
                 defaultValue={selectedUser?.userName}
                 autoComplete='off'
@@ -284,6 +293,7 @@ function Groups() {
                 label="Mobile Number"
                 variant="outlined"
                 fullWidth
+                className={classes.inputBox}
                 autoComplete='off'
                 name="mobileNo"
                 defaultValue={selectedUser?.mobileNo}
@@ -305,6 +315,7 @@ function Groups() {
                 label="Client Code"
                 variant="outlined"
                 fullWidth
+                className={classes.inputBox}
                 defaultValue={selectedUser?.clientCode}
                 autoComplete='off'
                 name="clientCode"

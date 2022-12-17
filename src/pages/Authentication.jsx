@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { TextField, Button, Box } from '@mui/material'
+import { TextField, Button, Box, createMuiTheme, useTheme } from '@mui/material'
 import { useForm } from "react-hook-form";
 import { makeStyles } from "@mui/styles";
 import { CommonContext } from '../contexts/CommonContext';
 import { auth } from '../firebase'
 import { AuthContext } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { getUserData, registerToken, setUserData, unRegisterToken, updateUserData } from '../services/api';
+import { getInputTheme, getUserData, registerToken, setUserData, unRegisterToken, updateUserData } from '../services/api';
 import { getFirebaseError } from '../services/error-codes';
 import stockpolice from '../assets/stockpolice.png'
 import {
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent:'center'
   },
   whiteBg : {
-    background:'white !important',
+    // background:'white !important',
     height:'100vh',
     display:'flex',
     width:'-webkit-fill-available',
@@ -57,13 +57,15 @@ const useStyles = makeStyles((theme) => ({
   logoImgCont : {
     textAlign : 'center',
     paddingTop:'2vh'
-  }
+  },
+  ...getInputTheme()
 }));
 
 
-function Authentication() {
+function Authentication(props) {
 
   const classes = useStyles()
+
   const [showSignIn, setShowSignIn] = useState(true)
   const [mobileNo, setMobileNo] = useState(null)
   const [deviceToken, setDeviceToken] = useState(null)
@@ -246,6 +248,7 @@ function Authentication() {
                       variant="outlined"
                       fullWidth
                       type="number"
+                      className={classes.inputBox}
                       autoComplete='off'
                       name="otp"
                       {...registerOtp("otp", {
@@ -272,6 +275,7 @@ function Authentication() {
                   variant="outlined"
                   fullWidth
                   autoComplete='off'
+                  className={classes.inputBox}
                   type="number"
                   name="mobileNo"
                   {...register("mobileNo", {
@@ -293,6 +297,7 @@ function Authentication() {
                   variant="outlined"
                   fullWidth
                   autoComplete='off'
+                  className={classes.inputBox}
                   name="clientCode"
                   {...register("clientCode", {
                     required: "Required field"

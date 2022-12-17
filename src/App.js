@@ -17,6 +17,7 @@ import Groups from './pages/Groups';
 import Videos from './pages/Videos';
 
 function App() {
+
   return (
     <CookiesProvider>
     <CommonProvider>
@@ -24,7 +25,7 @@ function App() {
       <Routes>
         <Route element={<FullPageLoader />} >
           <Route element={<AlertBox />} >
-            <Route path="/auth" element={<Authentication />}/>
+            <Route path="/auth" element={<Authentication  />}/>
 
             <Route element={<RequireAuth />} >
 

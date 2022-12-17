@@ -63,7 +63,6 @@ function Profile() {
   }, [])
 
   const logoutUser = () => {
-    console.log("====", userData)
     logout({deviceToken : userData.deviceToken, groups : userData.groups})
   }
 
