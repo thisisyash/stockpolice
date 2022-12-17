@@ -9,15 +9,29 @@ import StyleIcon from '@mui/icons-material/Style';
 import { AuthContext } from '../contexts/AuthContext'
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { makeStyles } from "@mui/styles";
+
+
+const useStyles = makeStyles((theme) => ({
+  navBarCont : {
+    width:'100%', 
+    position:'absolute', 
+    bottom:0, height:'7vh', 
+    boxShadow:'0px -3px 10px -5px #ffffff',
+    backgroundColor:'black !important',
+    color:'white'
+  }
+}))
 
 function BottomNavBar() {
+
+  const classes = useStyles()
   const [activeIndex, setActiveIndex] = useState(0)
   const {isUserAdmin} = useContext(AuthContext)
 
-
   const navigate    = useNavigate()
   return (
-    <BottomNavigation sx={{width:'100%', position:'absolute', bottom:0, height:'7vh', boxShadow:'0px -3px 10px -5px #666666;'}}
+    <BottomNavigation className={classes.navBarCont}
       value={activeIndex}
       onChange={(event, newIndex) => {
         setActiveIndex(newIndex)
@@ -43,7 +57,9 @@ function BottomNavBar() {
       <BottomNavigationAction label="Alerts" icon={<NotificationsActiveIcon />}/> 
       <BottomNavigationAction label="Profile" icon={<PersonIcon />}/>
       {
-        isUserAdmin() ? <BottomNavigationAction label="Admin" icon={<AdminPanelSettingsIcon />}/> : null
+        isUserAdmin() ? 
+          <BottomNavigationAction label="Admin" icon={<AdminPanelSettingsIcon />}/>
+           : null
       }
     </BottomNavigation>
   )

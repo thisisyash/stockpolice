@@ -41,7 +41,9 @@ const styles = {
   },
   logoImg :{
     height: '150px',
-    width:'150px'
+    width:'150px',
+    boxShadow:'1px 1px 25px -5px #00e6ff',
+    marginBottom:'15px'
   },
   center : {
     display:'flex',
@@ -54,8 +56,8 @@ const styles = {
     justifyContent:'center'
   },
   videoCont : {
-    padding:'10px', 
-    marginBottom:'15px'
+    padding:'5px', 
+    marginBottom:'5px'
   }
 }
 
@@ -117,12 +119,13 @@ function HomePage() {
               {
                 videos.map((video, index) => {
                   return(
-                  <Paper style={styles.videoCont} key={index}>
-                    {/* <h3>How to execute Zero Cost Trades?</h3> */}
+                  // <Paper style={styles.videoCont} key={index}>
+                    <Box style={styles.videoCont} key={index}x>
                     <iframe width="99%"
                       src={video}>
                     </iframe>
-                  </Paper>
+                    </Box>
+                  // </Paper>
                   )
                 })
               }

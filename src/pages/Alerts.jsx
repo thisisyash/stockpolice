@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { editAlertApi, getAlerts, getUserData } from '../services/api'
+import { editAlertApi, getAlerts, getUserData, getInputTheme } from '../services/api'
 import { Button, Box, Paper, TextField, Grid} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
@@ -50,12 +50,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent:'center'
   },
   appointmentBox : {
-    background : 'white',
+    background : 'black',
     padding:'20px',
     borderRadius:'5px',
     width:'80vw',
+    color:'white',
     maxWidth:'700px'
-  }
+  },
+  ...getInputTheme()
 }));
 
 function Alerts() {
@@ -178,6 +180,7 @@ function Alerts() {
                 fullWidth
                 multiline
                 autoFocus
+                className={classes.inputBox}
                 rows={4}
                 autoComplete='off'
                 defaultValue={selectedAlert?.body}

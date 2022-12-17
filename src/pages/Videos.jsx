@@ -2,12 +2,17 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { Button, Box, Paper, TextField, Checkbox} from '@mui/material'
 import { CommonContext } from '../contexts/CommonContext';
-import { getGlobals, saveVideosApi } from '../services/api';
+import { getGlobals, getInputTheme, saveVideosApi } from '../services/api';
 import ComponentLoader from '../components/ComponentLoader';
+import { makeStyles } from "@mui/styles";
 
+const useStyles = makeStyles((theme) => ({
+  ...getInputTheme()
+}))
 
 function Videos() {
 
+  const classes = useStyles()
   const { register : registerVideo, handleSubmit : submitVideo, reset : resetVideo, formState : {errors:videoErrors} } = useForm()
   const [videos, setVideos] = useState([])
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
@@ -93,6 +98,7 @@ function Videos() {
                 label="Enter Youtube Video Link"
                 variant="outlined"
                 required
+                className={classes.inputBox}
                 name="videoLink"
                 {...registerVideo("videoLink",{
                 pattern: {

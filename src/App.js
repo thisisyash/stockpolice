@@ -18,6 +18,7 @@ import Videos from './pages/Videos';
 import Messages from './pages/Messages';
 
 function App() {
+
   return (
     <CookiesProvider>
     <CommonProvider>
@@ -25,7 +26,7 @@ function App() {
       <Routes>
         <Route element={<FullPageLoader />} >
           <Route element={<AlertBox />} >
-            <Route path="/auth" element={<Authentication />}/>
+            <Route path="/auth" element={<Authentication  />}/>
 
             <Route element={<RequireAuth />} >
 

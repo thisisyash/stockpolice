@@ -1,10 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { Button, Box, Paper, TextField, Checkbox, Input, InputLabel, FormControl} from '@mui/material'
-import { getGroups } from '../services/api'
+import { getGroups, getInputTheme } from '../services/api'
 import { CommonContext } from '../contexts/CommonContext'
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import ComponentLoader from '../components/ComponentLoader';
+import { makeStyles } from "@mui/styles";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
+const useStyles = makeStyles((theme) => ({
+  ...getInputTheme()
+}))
 
 const styles = {
   centerTitle : {
@@ -16,6 +22,8 @@ const styles = {
 }
 
 function UploadContacts() {
+
+  const classes = useStyles()
 
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const [loading, setLoading] = useState(true)
@@ -65,9 +73,13 @@ function UploadContacts() {
           {
             groups?.length ?
               <Box sx={{ maxWidth: 120 }}>
-                <FormControl fullWidth>
+                <FormControl sx={{width:'50vw', border:'1px solid white', borderRadius:'5px'}}>
                   <Select
                     autoWidth
+                    className={classes.inputBox}
+                    IconComponent={() => (
+                      <ArrowDropDownIcon sx={{color:'white'}} />
+                    )}
                     value={selectedGroup}
                     onChange={handleChange}>
                     {
@@ -92,7 +104,7 @@ function UploadContacts() {
               Please select a XLSX file to continue</h4>
               <form onSubmit={handleSubmit}>
                 <Input type='file' name='file' onChange={handleFileChange} 
-                  sx={{marginRight:'10px'}}></Input>
+                  sx={{marginRight:'10px', color:'white'}}></Input>
                 <Button type='submit' variant='contained' sx={{marginTop:2}}>Upload</Button>
               </form>
             </> : null
