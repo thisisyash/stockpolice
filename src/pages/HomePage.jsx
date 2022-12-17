@@ -42,7 +42,7 @@ const styles = {
   logoImg :{
     height: '150px',
     width:'150px',
-    boxShadow:'1px 1px 25px -5px #00e6ff',
+    boxShadow:'1px 1px 25px -5px #30bbff',
     marginBottom:'15px'
   },
   center : {
@@ -51,6 +51,7 @@ const styles = {
     justifyContent:'center'
   },
   logoCont : {
+    marginTop:'10px',
     marginBottom:2, 
     display:'flex', 
     justifyContent:'center'

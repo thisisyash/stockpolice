@@ -7,7 +7,6 @@ function Messages() {
   return (
     <>
       <iframe src={tileDeskUrl} height="98%" width="99%"/>
-
     </>
   )
 }

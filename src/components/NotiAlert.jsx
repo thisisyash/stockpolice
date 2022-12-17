@@ -13,10 +13,11 @@ const styles = {
   body : {
     fontSize:'22px',
     marginBottom:'10px',
-    color:'black'
+    color:'white'
   },
   description: {
-    fontSize: '22px'
+    fontSize: '22px',
+    color:'white'
   }
 }
 

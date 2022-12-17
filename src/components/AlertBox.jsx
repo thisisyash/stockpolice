@@ -7,6 +7,8 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
+import {Box} from '@mui/material';
+
 
 function AlertBox() {
   const { alert, alertText, setAlert } = useContext(CommonContext)
@@ -20,7 +22,9 @@ function AlertBox() {
     <>
       <Dialog open={alert}>
         <DialogTitle>
-          Alert
+          <Box sx={{borderBottom:'1px solid #3c3c3c'}}>
+            Alert
+          </Box>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description" sx={{color:'white'}}>

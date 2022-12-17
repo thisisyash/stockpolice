@@ -332,7 +332,9 @@ export const getInputTheme = () => {
 
   return {
     inputBox : {
-      
+      "& .MuiOutlinedInput-input" : {
+        color:'white !important'
+      },
       "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
         borderColor: "white"
       },

@@ -88,6 +88,7 @@ function SendNotification() {
                 <FormControl fullWidth sx={{width:'50vw', border:'1px solid white', borderRadius:'5px'}}>
                   <Select
                     autoWidth
+                    className={classes.inputBox}
                     IconComponent={() => (
                       <ArrowDropDownIcon sx={{color:'white'}} />
                     )}

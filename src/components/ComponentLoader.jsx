@@ -18,7 +18,7 @@ function ComponentLoader({title}) {
       <Box sx={{ display: 'flex', marginBottom:2 }}>
         <CircularProgress />
       </Box>
-      {/* Loading... Please wait */}
+      Loading... Please wait
     </div> 
   )
 }
