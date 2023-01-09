@@ -8,6 +8,7 @@ import stockpolicelogo from '../assets/stockpolice.png'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { CommonContext } from '../contexts/CommonContext'
+import SmartSlider from "react-smart-slider"
 
 
 const styles = {
@@ -70,33 +71,64 @@ function HomePage() {
   const [loading, setLoading] = useState(true)
   const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const [videos, setVideos] = useState([])
+  const [slidesArr, setSlidesArr] = useState([])
+  const [banners, setBanners] = useState([])
 
   useEffect(() => {
 
     getUserData(getUserId(), true).then((response => {
+      if (!response) {
+        logout()
+      }
       if (response.multiLoginError) {
           logout(response)
           return
       }
+
       setUserData(response)
       setLoading(false)
     }))
 
     getGlobals().then((resp) => {
       setVideos(resp.videoLinks)
+      setBanners(resp.bannerLinks)
+      let slidesArr = []
+      if (resp.bannerLinks && resp.bannerLinks.length) {
+        resp.bannerLinks.forEach((link) => {
+          let obj = {
+            url : link,
+            childrenElem: <Box onClick={() => openBannerLink(link)} sx={{width:'100%', height:'100%'}} />
+          }
+          slidesArr.push(obj)
+        })
+      }
+      setSlidesArr(slidesArr)
     }).catch(() => {
       showAlert("Failed to fetch videos", "error")
     })
   }, [])
+
+  const openBannerLink = (link) => {
+    let websiteLink = link.split("@@@@@")[1]
+    if (websiteLink.slice(0,4) != 'http')
+      websiteLink = 'https://'+websiteLink
+    window.open(websiteLink, '_blank')
+  }
   
   return (
     <>
     {
       loading ? <ComponentLoader /> :
-      <Box p={2}>
+      <Box p={2} sx={{background:'black'}}>
         <div style={styles.logoCont}>
           <img src={stockpolicelogo} style={styles.logoImg}/>
         </div>
+        {
+          slidesArr && slidesArr.length ? 
+          <Box sx={{height:'25vh', marginBottom:'20px'}}>
+            <SmartSlider slides={slidesArr} autoSlide={true} height={'25vh'} />
+          </Box> : null
+        }
         <Box>
           <Paper style={styles.infoCard}>
             <span>
@@ -122,7 +154,7 @@ function HomePage() {
                   return(
                   // <Paper style={styles.videoCont} key={index}>
                     <Box style={styles.videoCont} key={index}x>
-                    <iframe width="99%"
+                    <iframe
                       src={video}>
                     </iframe>
                     </Box>

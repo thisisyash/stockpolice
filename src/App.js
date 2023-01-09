@@ -16,6 +16,7 @@ import AdminPanel from './pages/AdminPanel';
 import Groups from './pages/Groups';
 import Videos from './pages/Videos';
 import Messages from './pages/Messages';
+import BannersUpload from './pages/BannersUpload';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
               <Route path="/groups" element={<Groups />}/>
               <Route path="/videos" element={<Videos />}/>
               <Route path="/messages" element={<Messages />}/>
+              <Route path="/bannersUpload" element={<BannersUpload />}/>
 
             </Route>
 

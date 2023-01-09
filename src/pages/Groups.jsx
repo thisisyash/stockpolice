@@ -16,6 +16,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { updateUserData  } from '../services/api';
 import { makeStyles } from "@mui/styles";
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 
 
 const styles = {
@@ -80,9 +82,11 @@ function Groups() {
   const [deleteModal, setDeleteModal] = React.useState(false)
   const [activeGroup, setActiveGroup] = useState(null)
   const [users, setUsers] = useState([])
+  const [filteredUsers, setFilteredUsers] = useState([])
   const [selectedGroups, setSelectedGroups] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [editUser, setEditUser] = useState(false)
+  
 
   useEffect(() => {
     getAllGroups()
@@ -100,6 +104,7 @@ function Groups() {
     showLoader()
     getUsersByGroup(groupId).then((users) => {
       setUsers(users)
+      setFilteredUsers(users)
       hideLoader()
     }).catch((error) => {
       showSnackbar(getFirebaseError(error), 'error')
@@ -207,6 +212,15 @@ function Groups() {
   const closeUserModal = () => {
     setUserModal(false)
     resetUser()
+  }
+
+  const requestSearch = (searchedVal) => {
+    const filteredRows = users.filter((row) => {
+      return (row.userName.toLowerCase().includes(searchedVal.toLowerCase()) 
+              || row.clientCode.toLowerCase().includes(searchedVal.toLowerCase()))
+              || row.mobileNo.toLowerCase().includes(searchedVal.toLowerCase())
+    })
+    setFilteredUsers(filteredRows)
   }
 
   return (
@@ -410,9 +424,29 @@ function Groups() {
                     <Button variant="contained" onClick={handleAddUser}>
                       Add New User
                     </Button>
+                    <Box mt={3}>
+                      <TextField
+                        placeholder="Enter user name"
+                        label="Search Users"
+                        variant="outlined"
+                        fullWidth
+                        type="text"
+                        onChange={(e) => requestSearch(e.target.value)}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon sx={{color:'white'}} />
+                            </InputAdornment>
+                          ),
+                        }}
+                        className={classes.inputBox}
+                        autoComplete='off'
+                        name="searchValue"
+                      />
+                    </Box>
                     <Box sx={{marginTop:2}}>
                       {
-                        users.length ? <Box>
+                        filteredUsers.length ? <Box>
                   
                                 <TableContainer component={Paper}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -427,7 +461,7 @@ function Groups() {
                                     </TableRow>
                                   </TableHead>
                                   <TableBody>
-                                    {users.map((row) => (
+                                    {filteredUsers.map((row) => (
                                       <TableRow
                                         key={row.mobileNo}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -445,7 +479,7 @@ function Groups() {
                               </TableContainer>
                         </Box> : 
                           <Box>
-                            <h5>No Users Added</h5>
+                            <h5>No Users Found</h5>
                           </Box>
                       }
                     </Box>

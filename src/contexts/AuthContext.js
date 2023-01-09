@@ -83,7 +83,7 @@ export const AuthContextProvider = (props) => {
 
       if (data.deviceToken) {
         unRegisterToken(data.deviceToken, data.groups).then(async()=> {
-          console.log("Removing device from notifications : ", data.deviceToken, data.groups)
+          // console.log("Removing device from notifications : ", data.deviceToken, data.groups)
           hideLoader()
           navigate("/auth", {replace:true})
         }).catch(async(error) => {

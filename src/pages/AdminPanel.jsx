@@ -6,6 +6,7 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 const styles = {
   contentCard : {
@@ -100,12 +101,22 @@ function AdminPanel() {
             </Paper>
           </Grid>
 
-          <Grid item xs>
+          {/* <Grid item xs>
             <Paper style={styles.contentCard} onClick={() => navigate('/messages')}>
               <QuestionAnswerIcon 
               fontSize='large'/>
               <Button>
                 Messages
+              </Button>
+            </Paper>
+          </Grid> */}
+
+          <Grid item xs>
+            <Paper style={styles.contentCard} onClick={() => navigate('/bannersUpload')}>
+              <ViewCarouselIcon 
+              fontSize='large'/>
+              <Button>
+                Banners
               </Button>
             </Paper>
           </Grid>

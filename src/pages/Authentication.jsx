@@ -8,7 +8,7 @@ import { AuthContext } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { getInputTheme, getUserData, registerToken, setUserData, unRegisterToken, updateUserData } from '../services/api';
 import { getFirebaseError } from '../services/error-codes';
-import stockpolice from '../assets/stockpolice.png'
+import stockpolice from '../assets/stockpolice_white.png'
 import {
   PushNotifications,
 } from '@capacitor/push-notifications';
@@ -29,7 +29,8 @@ const useStyles = makeStyles((theme) => ({
     width:'-webkit-fill-available',
     maxWidth:'420px',
     flexDirection:'column',
-    textAlign:'center'
+    textAlign:'center',
+    background:'gray'
   },
   outerCont : {
     display:'flex',
@@ -154,6 +155,7 @@ function Authentication(props) {
       } else {
         // Show some error
       }
+      PushNotifications.createChannel({id:'alarm', name:'alarm', importance:5,visibility:1, sound:'mysound.mp3'})
     })
 
     // On success, we should be able to receive notifications
@@ -311,6 +313,11 @@ function Authentication(props) {
                 Log In 
               </Button>
             </form>
+            <Button variant="outlined" sx={{marginTop:5}} 
+              onClick={() => whatsappMe("8374190096")}>
+              Contact Admin 
+              <WhatsAppIcon sx={{marginLeft:2}}/>
+            </Button>
           </Box>
         }
         

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { editAlertApi, getAlerts, getUserData, getInputTheme } from '../services/api'
+import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti } from '../services/api'
 import { Button, Box, Paper, TextField, Grid} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
@@ -22,8 +22,11 @@ const useStyles = makeStyles((theme) => ({
   apptCont : {
     display:'flex',
     padding:'10px',
-    margin:'10px',
-    flexDirection:'column'
+    margin:'20px 15px',
+    flexDirection:'column',
+    background:'white',
+    color:'black',
+    borderRadius:'5px'
   },
 
   apptLabel: {
@@ -86,15 +89,21 @@ function Alerts() {
       newBody : data.alertData
     }
     showLoader()
+    
     editAlertApi(alertData).then(() => {
-      showSnackbar("Alert edited successfully")
-      onEditAlertClose()
-      hideLoader()
-      setLoading(true)
-      getDateWiseAlerts(new Date(new Date().setHours(0,0,0,0)).getTime(), true)
+      refreshNoti({topic : selectedAlert.topic}).then(() => {
+        showSnackbar("Alert edited successfully")
+        onEditAlertClose()
+        hideLoader()
+        setLoading(true)
+        getDateWiseAlerts(new Date(new Date().setHours(0,0,0,0)).getTime(), true)
+      }).catch(() => {
+        showAlert("Failed to update alert")
+        hideLoader()
+      })
     }).catch(() => {
       showAlert("Failed to update alert")
-      onEditAlertClose()
+      // onEditAlertClose()
       hideLoader()
     })
   }
@@ -115,7 +124,14 @@ function Alerts() {
     PushNotifications.addListener('pushNotificationReceived',
       (notification) => {
         setPushNotiRegistered(true)
-        showAlert(<NotiAlert props={notification}/>)
+
+        // Do not show alert during refresh on edit
+        if (notification.data && notification.data.key && notification.data.key == 'REFRESH_NOTIFICATION') {
+
+        } else {
+          showAlert(<NotiAlert props={notification}/>)
+        }
+        
         setTimeout(() => {
           //Referesh the alerts data after receiving the notification
           setLoading(true)
@@ -127,7 +143,7 @@ function Alerts() {
             }])
             setLoading(false)           
           }))
-        }, 1000)
+        }, 1500)
       }
     )
   }
@@ -211,7 +227,7 @@ function Alerts() {
     {
       loading ? 
       <ComponentLoader /> :
-      <Box>
+      <Box sx={{background:'black'}}>
         <h2 className={classes.center}>Alerts</h2>
         {
           alerts.map((alert, index) => {
@@ -225,9 +241,9 @@ function Alerts() {
                   
                   {
                     alert.alertItems.map((alert, newIndex) => {
-                      return <Paper key={newIndex} className={classes.apptCont}>
+                      return <Box key={newIndex} sx={{boxShadow:'0px 0px 5px 2px #30bbff'}} className={classes.apptCont}>
                       <Box>
-                        <Box sx={{fontSize:20}}> {alert.body} </Box>
+                        <Box sx={{fontSize:25}}> {alert.body} </Box>
                       </Box>
         
                       <Box>
@@ -245,7 +261,7 @@ function Alerts() {
                         
                       </Box>
                   
-                    </Paper>
+                    </Box>
         
                     })
                   }

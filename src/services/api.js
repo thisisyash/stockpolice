@@ -160,7 +160,7 @@ export const sendNewNotification = (async(data) => {
   data.uid = alertId
 
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.onrender.com/sendNotification", {
+    const orderResp = await fetch("http://192.168.43.142:3600/sendNotification", {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -178,6 +178,25 @@ export const sendNewNotification = (async(data) => {
   })
 })
 
+export const refreshNoti = (async(data) => {
+  return new Promise(async(resolve, reject) => {
+    const orderResp = await fetch("https://stockpolice-server.onrender.com/refreshNotifications", {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      "body": JSON.stringify(data)
+    }).then((response) => response.json())
+    .then(function(data) { 
+      resolve(data)
+    })
+    .catch((error) => {
+      console.log(error)
+      reject(error)
+    }); 
+  })
+})
 
 export const registerToken = (async(tokenId, groups) => {
   return new Promise(async(resolve, reject) => {
@@ -301,6 +320,7 @@ export const editAlertApi = (async(alertData) => {
     })
 })
 
+
 export const saveVideosApi = (async(videos) => {
   const globalCollRef = collection(db, 'globals')
     return new Promise((resolve, reject)=> {
@@ -325,6 +345,18 @@ export const getGlobals = (async() => {
       reject(error)
     })
   })
+})
+
+export const updateBannerLinks = (async(bannerLinks) => {
+  const globalCollRef = collection(db, 'globals')
+    return new Promise((resolve, reject)=> {
+      updateDoc(doc(globalCollRef,'globals'), {bannerLinks : bannerLinks}).then((querySnapshot) => {
+        resolve({})
+      }).catch((error)=> {
+        console.log(error)
+        reject(error)
+      })
+    })
 })
 
 

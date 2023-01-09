@@ -8,7 +8,6 @@ body {
   /* background: #eaeaea; */
   background: black;
   color: white;
-
 }
 
 .MuiPaper-root {
@@ -17,10 +16,24 @@ body {
   color: white !important;
 }
 
+iframe {
+  height: 25vh;
+  width: 99%;
+}
+
+.slideContainer {
+  height: 25vh;
+  min-height: auto !important;
+}
+
+.slideContainer img {
+  height: 25vh;
+}
+
 @media (min-width:768px)  { 
   body {
     /* background:white !important */
-    background: black;
+    background: grey;
     color: white;
   }
  
