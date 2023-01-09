@@ -160,7 +160,7 @@ export const sendNewNotification = (async(data) => {
   data.uid = alertId
 
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("http://192.168.43.142:3600/sendNotification", {
+    const orderResp = await fetch("https://stockpolice-server.onrender.com/sendNotification", {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
