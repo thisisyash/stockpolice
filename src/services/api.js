@@ -21,7 +21,7 @@ export const setUserData = (async(userData) => {
 
 export const createNewUser = (async(userData) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.onrender.com/createNewuser", {
+    const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/createNewuser`, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -81,7 +81,7 @@ export const getUserData = (async(id, verifyToken) => {
   //     return userDataCache
   //   }
   // }
-  
+
   return new Promise((resolve, reject)=> {
     getDoc(doc(db, `users/${id}`)).then((querySnapshot) => {
 
@@ -160,7 +160,7 @@ export const sendNewNotification = (async(data) => {
   data.uid = alertId
 
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.onrender.com/sendNotification", {
+    const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/sendNotification`, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -180,7 +180,7 @@ export const sendNewNotification = (async(data) => {
 
 export const refreshNoti = (async(data) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.onrender.com/refreshNotifications", {
+    const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/refreshNotifications`, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -200,7 +200,7 @@ export const refreshNoti = (async(data) => {
 
 export const registerToken = (async(tokenId, groups) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.onrender.com/subscribe", {
+    const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/subscribe`, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -224,7 +224,7 @@ export const registerToken = (async(tokenId, groups) => {
 
 export const unRegisterToken = (async(tokenId, groups) => {
   return new Promise(async(resolve, reject) => {
-    const orderResp = await fetch("https://stockpolice-server.onrender.com/unsubscribe", {
+    const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/unsubscribe`, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",

@@ -147,7 +147,7 @@ function HomePage() {
         <Box>
           <h2>Tutorials</h2>
           {
-            videos.length ? 
+            videos && videos.length ? 
             <Box>
               {
                 videos.map((video, index) => {

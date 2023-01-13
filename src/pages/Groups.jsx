@@ -206,7 +206,7 @@ function Groups() {
 
   const getGroupName = (id) => {
     if (!id) return null
-    return groups.filter((group) => group.groupId == id)[0].name + ' '
+    return groups.filter((group) => group.groupId == id)[0]?.name + ' '
   }
 
   const closeUserModal = () => {
