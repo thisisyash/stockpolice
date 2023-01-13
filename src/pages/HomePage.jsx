@@ -9,6 +9,10 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { CommonContext } from '../contexts/CommonContext'
 import SmartSlider from "react-smart-slider"
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 
 
 const styles = {
@@ -73,6 +77,7 @@ function HomePage() {
   const [videos, setVideos] = useState([])
   const [slidesArr, setSlidesArr] = useState([])
   const [banners, setBanners] = useState([])
+  const [update, setUpdate] = useState(false)
 
   useEffect(() => {
 
@@ -90,6 +95,13 @@ function HomePage() {
     }))
 
     getGlobals().then((resp) => {
+      console.log(resp, process.env.REACT_APP_VERSION)
+
+      if (resp.package != process.env.REACT_APP_VERSION) {
+        setUpdate(true)
+        return
+      }
+
       setVideos(resp.videoLinks)
       setBanners(resp.bannerLinks)
       let slidesArr = []
@@ -117,6 +129,19 @@ function HomePage() {
   
   return (
     <>
+    <Dialog open={update}>
+        <DialogTitle>
+          <Box sx={{borderBottom:'1px solid #3c3c3c'}}>
+            Alert
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description" sx={{color:'white'}}>
+            A new version of the app is available. Please download it from the website
+            <Box sx={{color:'#62bdff', textDecoration:'underline'}}>https://stockpolice.app</Box>
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     {
       loading ? <ComponentLoader /> :
       <Box p={2} sx={{background:'black'}}>

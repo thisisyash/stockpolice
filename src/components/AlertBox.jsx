@@ -11,6 +11,7 @@ import {Box} from '@mui/material';
 
 
 function AlertBox() {
+  
   const { alert, alertText, setAlert } = useContext(CommonContext)
 
   const handleClose = () => {
@@ -32,7 +33,7 @@ function AlertBox() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleClose}>
             Close
           </Button>
         </DialogActions>
