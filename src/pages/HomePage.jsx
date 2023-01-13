@@ -120,6 +120,11 @@ function HomePage() {
     })
   }, [])
 
+  const openUpdateUrl = (number) => {
+    window.open(`https://stockpolice.app`, '_blank')
+  }
+
+
   const openBannerLink = (link) => {
     let websiteLink = link.split("@@@@@")[1]
     if (websiteLink.slice(0,4) != 'http')
@@ -138,7 +143,8 @@ function HomePage() {
         <DialogContent>
           <DialogContentText id="alert-dialog-description" sx={{color:'white'}}>
             A new version of the app is available. Please download it from the website
-            <Box sx={{color:'#62bdff', textDecoration:'underline'}}>https://stockpolice.app</Box>
+            <Box sx={{color:'#62bdff', textDecoration:'underline'}}
+              onClick={openUpdateUrl}>https://stockpolice.app</Box>
           </DialogContentText>
         </DialogContent>
       </Dialog>
