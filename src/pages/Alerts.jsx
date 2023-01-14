@@ -16,6 +16,7 @@ import {
 import { CommonContext } from '../contexts/CommonContext'
 import NotiAlert from '../components/NotiAlert'
 import { Capacitor } from '@capacitor/core'
+import {NativeAudio} from '@capacitor-community/native-audio'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +80,14 @@ function Alerts() {
   // const [groups, setGroups] = useState({})
 
   useEffect(() => {
-    
+
+    NativeAudio.preload({
+      assetId: "mysound",
+      assetPath: "mysound.mp3",
+      audioChannelNum: 1,
+      isUrl: false
+    })
+  
     getDateWiseAlerts(fromTs, true)
   }, [])
 
@@ -129,6 +137,7 @@ function Alerts() {
         if (notification.data && notification.data.key && notification.data.key == 'REFRESH_NOTIFICATION') {
 
         } else {
+          NativeAudio.play({assetId: 'mysound'})
           showAlert(<NotiAlert props={notification}/>)
         }
         

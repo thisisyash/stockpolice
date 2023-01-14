@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@capacitor-community/native-audio": "^3.0.4",
     "@capacitor/android": "^4.4.0",
     "@capacitor/app": "^4.0.1",
     "@capacitor/core": "^4.4.0",
@@ -31,7 +32,6 @@
   "scripts": {
     "start": "env-cmd -f .env.development react-scripts start",
     "build": "env-cmd -f .env.development react-scripts build",
-
     "start:prod": "env-cmd -f .env.production react-scripts start",
     "build:prod": "env-cmd -f .env.production react-scripts build"
   },
