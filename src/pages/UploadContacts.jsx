@@ -48,7 +48,7 @@ function UploadContacts() {
     formData.append('file', fileData)
     formData.append('groupId', selectedGroup)
     showLoader()
-    const response = await fetch('https://stockpolice-server.onrender.com/uploadContacts', {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/uploadContacts`, {
       method: 'POST',
       body:formData 
     })

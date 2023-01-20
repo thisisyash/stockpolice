@@ -216,9 +216,9 @@ function Groups() {
 
   const requestSearch = (searchedVal) => {
     const filteredRows = users.filter((row) => {
-      return (row.userName.toLowerCase().includes(searchedVal.toLowerCase()) 
-              || row.clientCode.toLowerCase().includes(searchedVal.toLowerCase()))
-              || row.mobileNo.toLowerCase().includes(searchedVal.toLowerCase())
+      return (row.userName?.toLowerCase().includes(searchedVal.toLowerCase()) 
+              || row.clientCode?.toLowerCase().includes(searchedVal.toLowerCase()))
+              || row.mobileNo?.toLowerCase().includes(searchedVal.toLowerCase())
     })
     setFilteredUsers(filteredRows)
   }

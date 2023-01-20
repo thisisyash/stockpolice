@@ -112,7 +112,7 @@ function Profile() {
         </Paper>
       </Box>
       <Box sx={{textAlign:'center'}}>
-        {process.env.NODE_ENV == 'development' ? 'THIS IS TESTING APP' : null}
+        {process.env.REACT_APP_ENV === 'development' ? 'THIS IS TESTING APP' : null}
         <br />
         App Version : {process.env.REACT_APP_VERSION}
       </Box>
