@@ -17,6 +17,7 @@ import { CommonContext } from '../contexts/CommonContext'
 import NotiAlert from '../components/NotiAlert'
 import { Capacitor } from '@capacitor/core'
 import {NativeAudio} from '@capacitor-community/native-audio'
+import { useNavigate } from 'react-router-dom'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -128,6 +129,7 @@ function Alerts() {
   }
 
   const addPushNotiListener = (userGroups) => {
+
     //TODO - Optimize this logic by checking the current page
     PushNotifications.addListener('pushNotificationReceived',
       (notification) => {
@@ -152,7 +154,7 @@ function Alerts() {
             }])
             setLoading(false)           
           }))
-        }, 1500)
+        }, 2500)
       }
     )
   }

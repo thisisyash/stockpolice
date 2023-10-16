@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { Button, Box, Card, Paper, Grid } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { getGlobals, getUserData } from '../services/api'
+import { getGlobals, getUserData, updateUserData } from '../services/api'
 import { AuthContext } from '../contexts/AuthContext'
 import ComponentLoader from '../components/ComponentLoader'
 import stockpolicelogo from '../assets/stockpolice.png'
@@ -13,6 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
+import { Device } from '@capacitor/device';
 
 
 const styles = {
@@ -81,6 +82,15 @@ function HomePage() {
 
   useEffect(() => {
 
+    const updateDeviceDetails = async() => {
+      const deviceDetails = await Device.getInfo()
+      updateUserData({deviceDetails : JSON.stringify(deviceDetails)}, getUserId()).then(() => {
+        console.log("Device data updated successfully !")
+      }).catch((error) => {
+        console.log("Failed to update device data")
+      })
+    }
+
     getUserData(getUserId(), true).then((response => {
       if (!response) {
         logout()
@@ -89,18 +99,19 @@ function HomePage() {
           logout(response)
           return
       }
-
+      if (!response?.deviceDetails) {
+        updateDeviceDetails()
+      }
       setUserData(response)
       setLoading(false)
     }))
 
     getGlobals().then((resp) => {
-      console.log(resp, process.env.REACT_APP_VERSION)
-
-      if (resp.package != process.env.REACT_APP_VERSION) {
-        setUpdate(true)
-        return
-      }
+      
+      // if (resp.package != process.env.REACT_APP_VERSION) {
+      //   setUpdate(true)
+      //   return
+      // }
 
       setVideos(resp.videoLinks)
       setBanners(resp.bannerLinks)

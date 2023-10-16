@@ -359,6 +359,28 @@ export const updateBannerLinks = (async(bannerLinks) => {
     })
 })
 
+export const checkAppUpdates = (async(versionData) => {
+  return new Promise(async(resolve, reject) => {
+    const appUpdateResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/appVersionCheck`, {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      "body": JSON.stringify({
+        appVersion : versionData.appVersion
+      })
+    }).then((response) => response.json())
+    .then(function(data) { 
+      resolve(data)
+    })
+    .catch((error) => {
+      console.log(error)
+      reject(error)
+    }); 
+  })
+})
+
 
 export const getInputTheme = () => {
 

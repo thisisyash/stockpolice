@@ -87,9 +87,9 @@ function Authentication(props) {
 
   useEffect(() => {
 
-    //Remove chatbot on login page
-    const chatBot = document.getElementById("tiledesk-container")
-    if (chatBot) chatBot.remove()
+    //To remove chatbot on login page
+    // const chatBot = document.getElementById("tiledesk-container")
+    // if (chatBot) chatBot.remove()
     
     if(isUserLoggedIn()) {
       navigate("/", {replace:true})
@@ -164,6 +164,7 @@ function Authentication(props) {
 
         setDeviceToken(token.value)
         updateUserData({deviceToken : token.value}, userProfile.mobileNo).then(() => {
+          console.log("Updated new device token : ", token.value)
           setDeviceTokenCookie(token.value)  
         }).catch((error) => {
           showAlert("Failed to activate notifications. Please contact admin.")
@@ -194,7 +195,7 @@ function Authentication(props) {
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError',
       (error) => {
-
+        console.log("Error in setting up notifications")
       }
     );
   }
