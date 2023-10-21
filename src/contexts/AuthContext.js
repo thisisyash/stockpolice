@@ -11,7 +11,7 @@ export const AuthContext = React.createContext()
 export const AuthContextProvider = (props) => {
 
   const [userProfileData, setUserProfileData] = useState({})
-  const [cookies, setCookie, removeCookie] = useCookies(['userId', 'isAdmin', 'deviceToken'])
+  const [cookies, setCookie, removeCookie] = useCookies(['userId','userName', 'isAdmin', 'deviceToken'])
   // const [isAdmin, setIsAdmin] = useState(false)
   const { showLoader, hideLoader, showAlert } = useContext(CommonContext)
 
@@ -23,7 +23,10 @@ export const AuthContextProvider = (props) => {
     setUserProfileData,
     userLoggedIn,
     isUserLoggedIn,
+    userNameLoggedIn,
+    isUserNameLoggedIn,
     getUserId,
+    getUserName,
     setUserAsAdmin,
     isUserAdmin,
     setDeviceTokenCookie,
@@ -49,6 +52,17 @@ export const AuthContextProvider = (props) => {
     else return false
   }
 
+
+  function userNameLoggedIn(userName) {
+    if (!userName) return
+    setCookie('userName', userName, { path: '/'})
+  }
+
+  function isUserNameLoggedIn() {
+    if (cookies.userName) return true
+    else return false
+  }
+
   function setUserAsAdmin() {
     setCookie('isAdmin', true, { path: '/'})
   }
@@ -61,6 +75,14 @@ export const AuthContextProvider = (props) => {
   function getUserId() {
     if (isUserLoggedIn())
       return cookies.userId
+    else  
+      logout()
+  }
+
+
+  function getUserName() {
+    if (isUserNameLoggedIn())
+      return cookies.userName
     else  
       logout()
   }
@@ -80,7 +102,7 @@ export const AuthContextProvider = (props) => {
       removeCookie('userId')
       removeCookie('isAdmin')
       removeCookie('deviceToken')
-
+      removeCookie('userName')
       if (data.deviceToken) {
         unRegisterToken(data.deviceToken, data.groups).then(async()=> {
           // console.log("Removing device from notifications : ", data.deviceToken, data.groups)

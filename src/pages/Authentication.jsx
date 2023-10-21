@@ -1,14 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { TextField, Button, Box, createMuiTheme, useTheme } from '@mui/material'
+import { TextField, Button, Box } from '@mui/material'
 import { useForm } from "react-hook-form";
 import { makeStyles } from "@mui/styles";
 import { CommonContext } from '../contexts/CommonContext';
 import { auth } from '../firebase'
 import { AuthContext } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { getInputTheme, getUserData, registerToken, setUserData, unRegisterToken, updateUserData } from '../services/api';
+import { getUserData, registerToken, setUserData, unRegisterToken, updateUserData } from '../services/api';
 import { getFirebaseError } from '../services/error-codes';
-import stockpolice from '../assets/stockpolice_white.png'
+import stockpolice from '../assets/stockpolice.png'
 import {
   PushNotifications,
 } from '@capacitor/push-notifications';
@@ -23,14 +23,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent:'center'
   },
   whiteBg : {
-    // background:'white !important',
+    background:'white !important',
     height:'100vh',
     display:'flex',
     width:'-webkit-fill-available',
     maxWidth:'420px',
     flexDirection:'column',
-    textAlign:'center',
-    background:'gray'
+    textAlign:'center'
   },
   outerCont : {
     display:'flex',
@@ -58,15 +57,13 @@ const useStyles = makeStyles((theme) => ({
   logoImgCont : {
     textAlign : 'center',
     paddingTop:'2vh'
-  },
-  ...getInputTheme()
+  }
 }));
 
 
-function Authentication(props) {
+function Authentication() {
 
   const classes = useStyles()
-
   const [showSignIn, setShowSignIn] = useState(true)
   const [mobileNo, setMobileNo] = useState(null)
   const [deviceToken, setDeviceToken] = useState(null)
@@ -87,9 +84,9 @@ function Authentication(props) {
 
   useEffect(() => {
 
-    //To remove chatbot on login page
-    // const chatBot = document.getElementById("tiledesk-container")
-    // if (chatBot) chatBot.remove()
+    //Remove chatbot on login page
+    const chatBot = document.getElementById("tiledesk-container")
+    if (chatBot) chatBot.remove()
     
     if(isUserLoggedIn()) {
       navigate("/", {replace:true})
@@ -120,7 +117,7 @@ function Authentication(props) {
     setMobileNo(data.mobileNo)
 
     getUserData(data.mobileNo, false).then((response => {
-
+      console.log("===============", response)
       //User created
       if (response) {
         if (response.clientCode != data.clientCode.toUpperCase()) {
@@ -143,6 +140,7 @@ function Authentication(props) {
       hideLoader()
     })).catch((error) => {
       hideLoader()
+      console.log("=================", error)
       showAlert(getFirebaseError(error))
     })    
   }
@@ -155,7 +153,6 @@ function Authentication(props) {
       } else {
         // Show some error
       }
-      PushNotifications.createChannel({id:'alarm', name:'alarm', importance:5,visibility:1, sound:'mysound.mp3'})
     })
 
     // On success, we should be able to receive notifications
@@ -164,7 +161,6 @@ function Authentication(props) {
 
         setDeviceToken(token.value)
         updateUserData({deviceToken : token.value}, userProfile.mobileNo).then(() => {
-          console.log("Updated new device token : ", token.value)
           setDeviceTokenCookie(token.value)  
         }).catch((error) => {
           showAlert("Failed to activate notifications. Please contact admin.")
@@ -195,7 +191,7 @@ function Authentication(props) {
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError',
       (error) => {
-        console.log("Error in setting up notifications")
+
       }
     );
   }
@@ -213,6 +209,7 @@ function Authentication(props) {
       navigate('/', {replace:true})
     } catch (err) {
       hideLoader()
+      console.log("=============", err)
       showAlert(getFirebaseError(err.message))
     }
   }
@@ -251,7 +248,6 @@ function Authentication(props) {
                       variant="outlined"
                       fullWidth
                       type="number"
-                      className={classes.inputBox}
                       autoComplete='off'
                       name="otp"
                       {...registerOtp("otp", {
@@ -278,7 +274,6 @@ function Authentication(props) {
                   variant="outlined"
                   fullWidth
                   autoComplete='off'
-                  className={classes.inputBox}
                   type="number"
                   name="mobileNo"
                   {...register("mobileNo", {
@@ -300,7 +295,6 @@ function Authentication(props) {
                   variant="outlined"
                   fullWidth
                   autoComplete='off'
-                  className={classes.inputBox}
                   name="clientCode"
                   {...register("clientCode", {
                     required: "Required field"
@@ -314,11 +308,6 @@ function Authentication(props) {
                 Log In 
               </Button>
             </form>
-            <Button variant="outlined" sx={{marginTop:5}} 
-              onClick={() => whatsappMe("8374190096")}>
-              Contact Admin 
-              <WhatsAppIcon sx={{marginLeft:2}}/>
-            </Button>
           </Box>
         }
         

@@ -97,6 +97,7 @@ export const getUserData = (async(id, verifyToken) => {
 
       userDataCache = querySnapshot.data()
     }).catch((error)=> {
+      console.log("================", error)
       reject(null)
     })
   })

@@ -23,6 +23,7 @@ import { checkAppUpdates } from './services/api';
 import { App as CapApp } from '@capacitor/app';
 import { CapacitorUpdater } from '@capgo/capacitor-updater'
 import { PushNotifications } from '@capacitor/push-notifications';
+import AlertViews from './pages/AlertViews';
 
 let updateData = null
 
@@ -109,6 +110,7 @@ function App() {
               <Route path="/videos" element={<Videos />}/>
               <Route path="/messages" element={<Messages />}/>
               <Route path="/bannersUpload" element={<BannersUpload />}/>
+              <Route path="/alertViews" element={<AlertViews />}/>
 
             </Route>
 

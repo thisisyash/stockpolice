@@ -19,6 +19,7 @@ import { Capacitor } from '@capacitor/core'
 import {NativeAudio} from '@capacitor-community/native-audio'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { NavigateBeforeRounded } from '@mui/icons-material'
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -63,11 +64,20 @@ const useStyles = makeStyles((theme) => ({
     color:'white',
     maxWidth:'700px'
   },
+  contentCard : {
+    height:130,
+    width:'100%',
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'space-around',
+    padding:10,
+    alignItems:'center'
+  },
   ...getInputTheme()
 }));
 
-function Alerts() {
-  const navigate = useNavigate()
+function AlertViews() {
+
   const classes = useStyles()
   const [loading, setLoading] = useState(true)
   const [alerts, setAlerts] = useState([])
@@ -191,116 +201,30 @@ function Alerts() {
 
   return (
     <>
-    <Modal
-      open={editModal}
-      onClose={onEditAlertClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description">
-      <Box className={classes.modalStyle}>
-        <Box className={classes.appointmentBox}>
-        <h4>Edit Alert</h4>
-
-          <form onSubmit={submitAlertEdit(editAlert)}>
-            <Box mb={3}>
-              <TextField
-                placeholder="Alert Data"
-                label="Alert Data"
-                variant="outlined"
-                fullWidth
-                multiline
-                autoFocus
-                className={classes.inputBox}
-                rows={4}
-                autoComplete='off'
-                defaultValue={selectedAlert?.body}
-                name="alertData"
-                {...registerEditAlert("alertData", {
-                  required: "Required field"
-                })}
-                error={Boolean(editErrors?.alertData)}
-                helperText={editErrors?.alertData?.message}
-              />
-            </Box>
-            
-            <Box>
-              <Button variant="outlined" sx={{marginRight:2}}
-                onClick={onEditAlertClose}>
-                Cancel
-              </Button>
-              <Button type="submit" variant="contained" color="primary">
-                Submit
-              </Button>
-            </Box>
-            
-          </form>
-        </Box>
-      </Box>
-    </Modal>
+    
 
     {
-      loading ? 
-      <ComponentLoader /> :
+      
+      
       <Box sx={{background:'black'}}>
-        <h2 className={classes.center}>Alerts</h2>
-        {
-          alerts.map((alert, index) => {
-            return (
-            <Box key={index}>
-            <Box sx={{paddingLeft:'10px'}}>
-              {new Date(alert.timeStamp).toDateString() || 'N/A'}
-            </Box>
-              {
-                alert.alertItems.length ? <Box> 
-                  
-                  {
-                    alert.alertItems.map((alert, newIndex) => {
-                      return <Box key={newIndex} sx={{boxShadow:'0px 0px 5px 2px #30bbff'}} className={classes.apptCont}>
-                      <Box>
-                        <Box sx={{fontSize:25}}> {alert.body} </Box>
-                      </Box>
-        
-                      <Box>
-                        <Box className={classes.apptLabel}> 
-                          {new Date(alert.timeStamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                        </Box>
-                        {
-                          isUserAdmin() ? 
-                          <Box mt={2}>
-                            <Button variant="contained" onClick={() => selectAlertToEdit(alert)}>
-                              Edit
-                            </Button>
-                          </Box> : null
-                        }
-                        
-                      </Box>
-                  
-                    </Box>
-        
-                    })
-                  }
-                </Box> : 
-                <Box className={classes.center} p={4} >
-                  {/* No Alerts Found */}
-                  <div dangerouslySetInnerHTML={{__html:eaxampleAlert}}/>
-                </Box>
-              }
-            </Box>)
-          }) 
-        }
-        <Box className={classes.center} sx={{paddingBottom:3}}>
-          <Button variant="contained" onClick={loadMoreAlerts}> Load previous alerts </Button>
-        </Box>
-        
+        <h2 className={classes.center}>Viewed Status</h2>
+        <Grid>
+        <Grid>
+            <Paper style={useStyles.contentCard}>
+              <ViewCarouselIcon fontSize='large'/>
+              <span>
+                {getUserId()} 
+              </span>
+            </Paper>
+          </Grid>
+        </Grid> 
       </Box>
       
+      
     }
-    <Box className={classes.center} sx={{background:'black', position: 'fixed',
-      bottom: '20vw',
-      width:'100vw'}}>
-        <Button variant="contained" onClick={() => navigate('/alertViews')}> Views </Button>
-      </Box>
+    
     </>
   )
 }
 
-export default Alerts
+export default AlertViews
