@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti } from '../services/api'
+import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews } from '../services/api'
 import { Button, Box, Paper, TextField, Grid, Container, Icon} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
@@ -78,7 +78,6 @@ function Alerts() {
   const [editModal, setEditModal] = React.useState(false)
   const { register : registerEditAlert, handleSubmit : submitAlertEdit, reset : resetEditAlert, formState : {errors:editErrors} } = useForm()
   const [selectedAlert, setSelectedAlert] = useState(null)
-  const [eaxampleAlert, setexampleAlert] = useState('<p style="background-color:rgba(255,255,102);color:black;">example alert</p>')
 
   // const [groups, setGroups] = useState({})
 
@@ -177,6 +176,48 @@ function Alerts() {
           }
         )
         setAlerts(prevAlerts)
+
+        //API to insert alert views
+        
+        const userData = {
+          name       : resp.userName,
+          viewedOn   : new Date().toLocaleString(),
+          clientCode : resp.clientCode
+        }
+
+        //Looping all alerts
+        response.forEach((alert) => {
+          
+          if (alert.alertViews) {
+
+            if (alert.alertViews.some((alertView) => alertView.clientCode == resp.clientCode)) {
+              //Alert view already recorded. Nothing to do
+            } else {
+              const params = {
+                uid        : alert.uid,
+                alertViews : alert.alertViews.concat(userData)
+              }
+              // //If user has not viewed then call this api
+              updateAlertViews(params).then((response) => {
+                //Alert views updated successfully
+              }).catch((err) => {
+                //Error in updating alert views
+              })
+            }           
+          } else {
+
+            const params = {
+              uid        : alert.uid,
+              alertViews : [userData]
+            }
+              updateAlertViews(params).then((response) => {
+                //Alert views updated successfully
+              }).catch((err) => {
+                //Error in updating alert views
+              })
+          }
+        }) 
+
         hideLoader()
         setLoading(false)
       }))
@@ -256,7 +297,9 @@ function Alerts() {
                     alert.alertItems.map((alert, newIndex) => {
                       return <Box key={newIndex} sx={{boxShadow:'0px 0px 5px 2px #30bbff'}} className={classes.apptCont}>
                       <Box>
-                        <Box sx={{fontSize:25}}> {alert.body} </Box>
+                        <Box> 
+                          <div dangerouslySetInnerHTML={{__html:alert.body}}/>
+                        </Box>
                       </Box>
         
                       <Box>
@@ -266,9 +309,13 @@ function Alerts() {
                         {
                           isUserAdmin() ? 
                           <Box mt={2}>
-                            <Button variant="contained" onClick={() => selectAlertToEdit(alert)}>
+                            <Button variant="contained" onClick={() => selectAlertToEdit(alert)} sx={{marginRight:'10px'}}>
                               Edit
                             </Button>
+                            <Button variant="contained" onClick={() => navigate('/alertViews', {state : alert})}> 
+                              Views 
+                            </Button>
+
                           </Box> : null
                         }
                         
@@ -280,8 +327,7 @@ function Alerts() {
                   }
                 </Box> : 
                 <Box className={classes.center} p={4} >
-                  {/* No Alerts Found */}
-                  <div dangerouslySetInnerHTML={{__html:eaxampleAlert}}/>
+                  No Alerts Found
                 </Box>
               }
             </Box>)
@@ -294,11 +340,6 @@ function Alerts() {
       </Box>
       
     }
-    <Box className={classes.center} sx={{background:'black', position: 'fixed',
-      bottom: '20vw',
-      width:'100vw'}}>
-        <Button variant="contained" onClick={() => navigate('/alertViews')}> Views </Button>
-      </Box>
     </>
   )
 }

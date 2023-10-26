@@ -382,6 +382,17 @@ export const checkAppUpdates = (async(versionData) => {
   })
 })
 
+export const updateAlertViews = ((alertData) => {
+  const alertCollRef = collection(db, 'alerts')
+  return new Promise((resolve, reject)=> {
+    updateDoc(doc(alertCollRef, alertData.uid), {alertViews : alertData.alertViews}).then((querySnapshot) => {
+      resolve({})
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
+
 
 export const getInputTheme = () => {
 

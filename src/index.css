@@ -67,7 +67,7 @@ code {
 } */
 
   .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline{
-    borderColor: "white"
+    borderColor: "white !important"
   }
 
 .MuiTableCell-root {
@@ -76,8 +76,13 @@ code {
 
 .quill {
   max-width: 92vw !important;
+  background: white !important;
+  color: black !important;
 }
 
+.ql-snow {
+  background: white !important;
+}
 
 .user-views {
   display: flex;

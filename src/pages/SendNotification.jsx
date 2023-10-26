@@ -66,7 +66,7 @@ function SendNotification() {
   const [loading, setLoading] = useState(true)
   const [groups, setGroups] = useState([])
   const [selectedGroup, setSelectedGroup] = useState('')
-  const [bodyvalue, setBodyValue] = useState(null)
+  const [alertBody, setAlertBody] = useState(null)
 
   useEffect(() => {
     getGroups().then((response => {
@@ -84,7 +84,7 @@ function SendNotification() {
     showLoader()
     const notiData = {
       // title : data.title,
-      body: data.body,
+      body: alertBody,
       topic: selectedGroup,
       description : data.description,
       timeStamp: Date.now()
@@ -109,7 +109,7 @@ function SendNotification() {
                 <h5>Please select a group to send notification</h5>
                 {
                   groups?.length ?
-                    <Box sx={{ maxWidth: 120 }}>
+                    <Box sx={{ maxWidth: 120, border:'1px solid white', borderRadius:'5px'}}>
                       <FormControl fullWidth>
                         <Select
                           autoWidth
@@ -176,9 +176,9 @@ function SendNotification() {
                             theme="snow"
                             modules={modules}
                             formats={formats}
-                            value={bodyvalue}
+                            value={alertBody}
                             placeholder="Enter notification description...."
-                            onChange={setBodyValue}
+                            onChange={setAlertBody}
                             style={{ height: "220" }}
                             name="description"
                             // {...register("description", {
