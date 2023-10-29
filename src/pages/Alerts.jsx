@@ -19,6 +19,8 @@ import { Capacitor } from '@capacitor/core'
 import {NativeAudio} from '@capacitor-community/native-audio'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { NavigateBeforeRounded } from '@mui/icons-material'
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +68,31 @@ const useStyles = makeStyles((theme) => ({
   ...getInputTheme()
 }));
 
+
+var formats = [
+  "header", "height", "bold", "italic",
+  "underline", "strike", "blockquote",
+  "list", "color", "bullet", "indent",
+  "link", "align", "size",
+];
+
+var modules = {
+  toolbar: [
+    [{ size: ["small", false, "large", "huge"] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+      { align: [] }
+    ],
+    [{ "color": ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color'] }],
+  ]
+};
+
 function Alerts() {
   const navigate = useNavigate()
   const classes = useStyles()
@@ -78,6 +105,9 @@ function Alerts() {
   const [editModal, setEditModal] = React.useState(false)
   const { register : registerEditAlert, handleSubmit : submitAlertEdit, reset : resetEditAlert, formState : {errors:editErrors} } = useForm()
   const [selectedAlert, setSelectedAlert] = useState(null)
+  const [fileType, setfileType] = useState(null)
+  const [alertBody, setAlertBody] = useState(null)
+  const [body, setBody] = useState(null)
 
   // const [groups, setGroups] = useState({})
 
@@ -93,10 +123,27 @@ function Alerts() {
     getDateWiseAlerts(fromTs, true)
   }, [])
 
+  const handleQuillChange = (content, delta, source, editor) => {
+    // Get the HTML value from the ReactQuill content
+    const htmlValue = editor.getHTML();
+
+    // Get the text value (without HTML tags) from the ReactQuill content
+    const textValue = editor.getText();
+
+    // Set the state with the HTML value
+    setAlertBody(htmlValue);
+    setBody(textValue);
+    // Now you have both the HTML and text values
+    console.log('HTML Value:', htmlValue);
+    console.log('Text Value:', textValue);
+  };
+
   const editAlert = (data) => {
     const alertData = {
       uid : selectedAlert.uid,
-      newBody : data.alertData
+      //newBody : data.alertData,
+      newBody : alertBody,
+      body : body
     }
     showLoader()
     
@@ -243,7 +290,7 @@ function Alerts() {
 
           <form onSubmit={submitAlertEdit(editAlert)}>
             <Box mb={3}>
-              <TextField
+              {/* <TextField
                 placeholder="Alert Data"
                 label="Alert Data"
                 variant="outlined"
@@ -260,7 +307,26 @@ function Alerts() {
                 })}
                 error={Boolean(editErrors?.alertData)}
                 helperText={editErrors?.alertData?.message}
-              />
+              /> */}
+              <ReactQuill
+                theme="snow"
+                fullWidth
+                multiline
+                autoFocus
+                modules={modules}
+                formats={formats}
+                defaultValue={selectedAlert?.newBody}
+                placeholder="Enter notification description...."
+                onChange={handleQuillChange}
+                style={{ height: "220" }}
+                name="description"
+                // {...register("description", {
+                //   required: "Required field"
+                // })}
+                // error={Boolean(errors?.description)}
+                // helperText={errors?.description?.message}
+              >
+              </ReactQuill>
             </Box>
             
             <Box>
@@ -298,8 +364,31 @@ function Alerts() {
                       return <Box key={newIndex} sx={{boxShadow:'0px 0px 5px 2px #30bbff'}} className={classes.apptCont}>
                       <Box>
                         <Box> 
-                          <div dangerouslySetInnerHTML={{__html:alert.body}}/>
+                          <div dangerouslySetInnerHTML={{__html:alert.newBody}}/>
                         </Box>
+                        
+                         <Box sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+                         {alert.fileType === 'IMAGE'? (
+                            <img className={classes.prodImg} src={alert.fileLink} alt="Product Image" />
+                          ):null}
+
+                        {alert.fileType === 'VIDEO' ? (
+                            <video style={{width:'100%'}} className={classes.prodVideo} controls>
+                            <source src={alert.fileLink} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                          ):null}
+
+                        {alert.fileType === 'EXCEL' ? (
+                            <a
+                            href={alert.fileLink}
+                            download="your-excel-file.xlsx"
+                          >
+                            Download Excel File
+                          </a>
+                          ):null}
+                          
+                        </Box>      
                       </Box>
         
                       <Box>

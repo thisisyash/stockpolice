@@ -313,7 +313,7 @@ export const getUsersByGroup = (async(groupId) => {
 export const editAlertApi = (async(alertData) => {
     const alertCollRef = collection(db, 'alerts')
     return new Promise((resolve, reject)=> {
-      updateDoc(doc(alertCollRef, alertData.uid), {body : alertData.newBody}).then((querySnapshot) => {
+      updateDoc(doc(alertCollRef, alertData.uid), {newBody : alertData.newBody,body : alertData.body}).then((querySnapshot) => {
         resolve({})
       }).catch((error)=> {
         reject(error)
@@ -392,6 +392,45 @@ export const updateAlertViews = ((alertData) => {
     })
   })
 })
+
+
+export const uploadAlertNotificationImage = (async(fileData, fileMetadata, fileName, path) => {
+  const storage = getStorage();
+  const storageRef = ref(storage, `${path}/${fileName}`);
+  let metadata = {
+    contentType: fileMetadata.type,
+  };
+  return new Promise((resolve, reject) => {
+    uploadBytes(storageRef, fileData, metadata).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((downloadURL) => {
+        resolve(downloadURL)
+      })
+    })
+  })
+})
+export const updateAlertImageLinks = (async(alertImageLinks) => {
+  const globalCollRef = collection(db, 'alerts')
+    return new Promise((resolve, reject)=> {
+      updateDoc(doc(globalCollRef,'alerts'), {alertImageLinks : alertImageLinks}).then((querySnapshot) => {
+        resolve({})
+      }).catch((error)=> {
+        console.log(error)
+        reject(error)
+      })
+    })
+})
+export const saveAlertVideosApi = (async(videos) => {
+  const globalCollRef = collection(db, 'globals')
+    return new Promise((resolve, reject)=> {
+      updateDoc(doc(globalCollRef,'globals'), {alertVideoLinks : videos}).then((querySnapshot) => {
+        resolve({})
+      }).catch((error)=> {
+        console.log(error)
+        reject(error)
+      })
+    })
+})
+
 
 
 export const getInputTheme = () => {
