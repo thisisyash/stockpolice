@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems:'center',
     justifyContent:'center'
   },
+
   modalStyle : {
     position: 'absolute',
     top: '50%',
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
     display:'flex',
     justifyContent:'center'
   },
+
   appointmentBox : {
     background : 'black',
     padding:'20px',
@@ -65,7 +67,9 @@ const useStyles = makeStyles((theme) => ({
     color:'white',
     maxWidth:'700px'
   },
+
   ...getInputTheme()
+
 }));
 
 
@@ -109,8 +113,6 @@ function Alerts() {
   const [alertBody, setAlertBody] = useState(null)
   const [body, setBody] = useState(null)
 
-  // const [groups, setGroups] = useState({})
-
   useEffect(() => {
 
     NativeAudio.preload({
@@ -121,30 +123,26 @@ function Alerts() {
     })
   
     getDateWiseAlerts(fromTs, true)
+
   }, [])
 
   const handleQuillChange = (content, delta, source, editor) => {
-    // Get the HTML value from the ReactQuill content
+
     const htmlValue = editor.getHTML();
-
-    // Get the text value (without HTML tags) from the ReactQuill content
     const textValue = editor.getText();
-
-    // Set the state with the HTML value
     setAlertBody(htmlValue);
     setBody(textValue);
-    // Now you have both the HTML and text values
-    console.log('HTML Value:', htmlValue);
-    console.log('Text Value:', textValue);
+
   };
 
   const editAlert = (data) => {
+    
     const alertData = {
       uid : selectedAlert.uid,
-      //newBody : data.alertData,
       newBody : alertBody,
       body : body
     }
+
     showLoader()
     
     editAlertApi(alertData).then(() => {
@@ -290,24 +288,6 @@ function Alerts() {
 
           <form onSubmit={submitAlertEdit(editAlert)}>
             <Box mb={3}>
-              {/* <TextField
-                placeholder="Alert Data"
-                label="Alert Data"
-                variant="outlined"
-                fullWidth
-                multiline
-                autoFocus
-                className={classes.inputBox}
-                rows={4}
-                autoComplete='off'
-                defaultValue={selectedAlert?.body}
-                name="alertData"
-                {...registerEditAlert("alertData", {
-                  required: "Required field"
-                })}
-                error={Boolean(editErrors?.alertData)}
-                helperText={editErrors?.alertData?.message}
-              /> */}
               <ReactQuill
                 theme="snow"
                 fullWidth
@@ -320,25 +300,23 @@ function Alerts() {
                 onChange={handleQuillChange}
                 style={{ height: "220" }}
                 name="description"
-                // {...register("description", {
-                //   required: "Required field"
-                // })}
-                // error={Boolean(errors?.description)}
-                // helperText={errors?.description?.message}
               >
               </ReactQuill>
             </Box>
             
             <Box>
+
               <Button variant="outlined" sx={{marginRight:2}}
                 onClick={onEditAlertClose}>
                 Cancel
               </Button>
+
               <Button type="submit" variant="contained" color="primary">
                 Submit
               </Button>
+
             </Box>
-            
+
           </form>
         </Box>
       </Box>
@@ -368,25 +346,40 @@ function Alerts() {
                         </Box>
                         
                          <Box sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
-                         {alert.fileType === 'IMAGE'? (
-                            <img className={classes.prodImg} src={alert.fileLink} alt="Product Image" />
-                          ):null}
+                         {
+                            alert.fileType === 'IMAGE'? 
+                              (
+                                <img className={classes.prodImg} style={{maxWidth: '-webkit-fill-available'}} src={alert.fileLink} alt="Product Image" />
+                              )
+                              :
+                              null
+                          }
 
-                        {alert.fileType === 'VIDEO' ? (
-                            <video style={{width:'100%'}} className={classes.prodVideo} controls>
-                            <source src={alert.fileLink} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                          ):null}
+                          {
+                            alert.fileType === 'VIDEO' ? 
+                              (
+                                <video style={{maxWidth: '-webkit-fill-available'}} className={classes.prodVideo} controls>
+                                  <source src={alert.fileLink} type="video/mp4" />
+                                  Your browser does not support the video tag.
+                                </video>
+                              )
+                              :
+                              null
+                          }
 
-                        {alert.fileType === 'EXCEL' ? (
-                            <a
-                            href={alert.fileLink}
-                            download="your-excel-file.xlsx"
-                          >
-                            Download Excel File
-                          </a>
-                          ):null}
+                          {
+                            alert.fileType === 'EXCEL' ? 
+                              (
+                                <a
+                                  href={alert.fileLink}
+                                  download="your-excel-file.xlsx"
+                                >
+                                  Download Excel File
+                                </a>
+                              )
+                              :
+                              null
+                          }
                           
                         </Box>      
                       </Box>

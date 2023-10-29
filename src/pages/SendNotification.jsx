@@ -1,22 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { TextField, Button, Box, Card, Paper, Grid, FormControl } from '@mui/material'
-import { makeStyles } from "@mui/styles"
-import { useForm, Controller } from "react-hook-form"
-import { AuthContext } from '../contexts/AuthContext'
-import { CommonContext } from '../contexts/CommonContext'
-import { getGroups, getInputTheme, sendNewNotification, updateAlertImageLinks, uploadAlertNotificationImage } from '../services/api'
-import ComponentLoader from '../components/ComponentLoader'
-import MenuItem from '@mui/material/MenuItem'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
-
-const FILE_TYPE = {
-  IMAGE: 'IMAGE',
-  VIDEO: 'VIDEO',
-  EXCEL: 'EXCEL'
-}
+import { makeStyles } from "@mui/styles";
+import { useForm, Controller } from "react-hook-form";
+import { AuthContext } from '../contexts/AuthContext';
+import { CommonContext } from '../contexts/CommonContext';
+import { getGroups, getInputTheme, sendNewNotification, updateAlertImageLinks, uploadAlertNotificationImage } from '../services/api';
+import ComponentLoader from '../components/ComponentLoader';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const useStyles = makeStyles((theme) => ({
   center: {
@@ -25,10 +19,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     marginBottom: 0
   },
-  // whiteBg : {
-  //   background:'white !important',
-  //   height:'-webkit-fill-available'
-  // },
+ 
   prodImg: {
     height: '30vw',
     width: '30vw'
@@ -44,15 +35,15 @@ var formats = [
   "list", "color", "bullet", "indent",
   //"link", "image", "align", "size",
   "link", "align", "size",
-]
+];
 
 var modules = {
   toolbar: [
     [{ size: ["small", false, "large", "huge"] }],
     ["bold", "italic", "underline", "strike", "blockquote"],
     [{ list: "ordered" }, { list: "bullet" }],
-    // ["link", "image"],
-    ["link"],
+   // ["link", "image"],
+   ["link"],
     [
       { list: "ordered" },
       { list: "bullet" },
@@ -62,7 +53,9 @@ var modules = {
     ],
     [{ "color": ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color'] }],
   ]
-}
+};
+
+const fileTypemode=['IMAGE','VIDEO','EXCEL']
 
 function SendNotification() {
 
@@ -79,144 +72,138 @@ function SendNotification() {
   const [fileLink, setFileLink] = useState(null)
   const [fileType, setFileType] = useState(null)
 
-  // const [showImageBox, setShowImageBox] = useState(true)
-  // const [showVideoBox, setShowVideoBox] = useState(true)
-  // const [showExcelBox, setShowExcelBox] = useState(true)
-
-
-
   useEffect(() => {
+
     getGroups().then((response => {
       setGroups(response)
       setLoading(false)
     }))
+
   }, [])
 
   const handleChange = (event) => {
+
     setSelectedGroup(event.target.value)
+
   }
 
 
-  function remove() {
+  function remove(){
+
     showLoader()
-    setFileLink('')
-    setFileType('')
-    setShowImageBox(true)
-    setShowVideoBox(true)
-    setShowExcelBox(true)
+    setFileLink(null)
+    setFileType(null)
     hideLoader()
+
 
   }
 
   const handleQuillChange = (content, delta, source, editor) => {
-    // Get the HTML value from the ReactQuill content
-    const htmlValue = editor.getHTML()
 
-    // Get the text value (without HTML tags) from the ReactQuill content
-    const textValue = editor.getText()
+    const htmlValue = editor.getHTML();
+    const textValue = editor.getText();
+    setAlertBody(htmlValue);
+    setBody(textValue);
 
-    // Set the state with the HTML value
-    setAlertBody(htmlValue)
-    setBody(textValue)
-    // Now you have both the HTML and text values
-    // console.log('HTML Value:', htmlValue)
-    // console.log('Text Value:', textValue)
-  }
+  };
 
-  async function handleProductImgUpload(e, filetype) {
-    var fileName = ''
-    const file = e.target.files[0]
+  async function handleProductImgUpload(e,filetype) {
+
+    var fileName='';
+    const file = e.target.files[0];
     if (filetype == "IMAGE") {
+
       if (file) {
-        // Define an array of allowed file extensions
-        const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif']
-        // Get the file extension
-        const fileExtension = file.name.split('.').pop().toLowerCase()
+
+        const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
         if (allowedExtensions.includes(fileExtension)) {
+
           fileName = `alert-${Date.now()}.jpg`
-          setShowImageBox(true)
-          setShowVideoBox(false)
-          setShowExcelBox(false)
+
         } else {
-          // File is not of an allowed format, so you can show an error message or take appropriate action
-          showSnackbar('Invalid file format. Allowed formats: jpg, jpeg, png, gif', 'error')
-          e.target.value = ''
-          setFileLink('')
+      
+          showSnackbar('Invalid file format. Allowed formats: jpg, jpeg, png, gif', 'error');
+          e.target.value = '';
+          setFileLink('');
           hideLoader()
-          return // Clear the input field
+          return; 
         }
       }
-
+      
     } else if (filetype == "VIDEO") {
-      const file = e.target.files[0]
+
+      const file = e.target.files[0];
       if (file) {
-        const allowedFormats = ['mp4', 'avi', 'mov', 'mkv', 'wmv']
-        const fileExtension = file.name.split('.').pop().toLowerCase()
+
+        const allowedFormats = ['mp4', 'avi', 'mov', 'mkv', 'wmv'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
         if (allowedFormats.includes(fileExtension)) {
+
           fileName = `alert-${Date.now()}.mp4`
 
-          setShowImageBox(false)
-          setShowVideoBox(true)
-          setShowExcelBox(false)
-
-
-          // You can handle the selected video file here or upload it to a server
         } else {
-          // File is not of an allowed format, so you can show an error message or take appropriate action
-          showSnackbar('Invalid video format. Allowed formats: mp4, avi, mov, mkv, wmv', 'error')
-          e.target.value = '' // Clear the input field
-          setFileLink('')
+      
+          showSnackbar('Invalid video format. Allowed formats: mp4, avi, mov, mkv, wmv', 'error');
+          e.target.value = '';
+          setFileLink('');
           hideLoader()
-          return
+          return;
+
         }
+
       }
+      
+    } else if(filetype == "EXCEL"){
 
-    } else if (filetype == "EXCEL") {
-
-      const file = e.target.files[0]
+      const file = e.target.files[0];
 
       if (file) {
-
-        const allowedFormats = ['xlsx', 'pdf'],
-              fileExtension  = file.name.split('.').pop().toLowerCase()
-
+        const allowedFormats = ['xlsx', 'pdf'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
         if (allowedFormats.includes(fileExtension)) {
 
           fileName = `alert-${Date.now()}.xlsx`
-          setShowImageBox(false)
-          setShowVideoBox(false)
-          setShowExcelBox(true)
+  
         } else {
 
-          showSnackbar('Invalid file format. Allowed formats: xlsx (Excel) and pdf (PDF)', 'error')
-          e.target.value = '' // Clear the input field
-          setFileLink('')
+          showSnackbar('Invalid file format. Allowed formats: xlsx (Excel) and pdf (PDF)', 'error');
+          e.target.value = '';
+          setFileLink('');
           hideLoader()
-          return
+          return;
+
         }
+
       }
-
+      
     }
-    setFileType(filetype)
+    setFileType(filetype);
     showLoader()
-
+    
     uploadAlertNotificationImage(await e.target.files[0].arrayBuffer(), e.target.files[0], fileName, 'alert').then((downloadUrl) => {
+
       setFileLink(downloadUrl)
       hideLoader()
+
     })
+
   }
 
   function onFormSubmit(data) {
+
     showLoader()
+
     const notiData = {
-      fileType    : fileType,
-      fileLink    : fileLink,
-      body        : body,
-      topic       : selectedGroup,
+      fileType:fileType,
+      fileLink:fileLink,
+      body: body,
+      topic: selectedGroup,
       description : data.description,
-      newBody     : alertBody,
-      timeStamp   : Date.now()
+      newBody:alertBody,  
+      timeStamp: Date.now()
     }
+   
     sendNewNotification(notiData).then(async () => {
       hideLoader()
       showSnackbar('Notification Sent Successfully')
@@ -237,7 +224,7 @@ function SendNotification() {
                 <h5>Please select a group to send notification</h5>
                 {
                   groups?.length ?
-                    <Box sx={{ maxWidth: 120, border: '1px solid white', borderRadius: '5px' }}>
+                    <Box sx={{ maxWidth: 120, border:'1px solid white', borderRadius:'5px'}}>
                       <FormControl fullWidth>
                         <Select
                           autoWidth
@@ -258,6 +245,7 @@ function SendNotification() {
                       No Groups Found
                     </Box>
                 }
+
                 {
                   selectedGroup ?
                     <Box>
@@ -265,6 +253,7 @@ function SendNotification() {
                       <form onSubmit={handleSubmit(onFormSubmit)}>
 
                         <Box mb={15} style={{ display: "grid", justifyContent: "left", height: 300 }}>
+
                           <ReactQuill
                             theme="snow"
                             modules={modules}
@@ -276,98 +265,143 @@ function SendNotification() {
                             name="body"
                           >
                           </ReactQuill>
+                          
                         </Box>
 
                         {
-                          fileType == 'IMAGE' && (
+                          (fileType=="IMAGE" || fileType==null) 
+                          && 
+                          (
                             <Box mb={3}>
-                                { 
-                                  fileLink ?
-                                    <Box sx={{ wordWrap: "break-word", maxWidth: '100vw' }}>
-                                      File added successfully
-                                      <Button onClick={() => remove()}
-                                        variant="outlined" sx={{ marginLeft: '14rem', marginBottom: '6px', height: 'fit-content' }}>
-                                        Remove
-                                      </Button> 
-                                    </Box> 
-                                      : 
-                                    null
-                                }
-                                
-                                <Button sx={{ width: '100%' }}
-                                  variant="contained"
-                                  component="label">
-                                  Upload image
-                                  <input
-                                    name="alertimgageLink"
-                                    onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
-                                    type="file"
-                                    hidden
-                                  />
-                                </Button>
-                            </Box>)
-                          }
+                              {
+                                fileLink?
 
-                        {fileType == 'VIDEO' && (<Box mb={3}>
-                          {fileLink ?
+                                  <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
 
-                            <Box sx={{ wordWrap: "break-word", maxWidth: '100vw' }}>
-                              {fileLink}
-                            </Box> : ''}
-                          {fileLink ?
+                                    IMAGE added Successfully
 
-                            <Button onClick={() => remove()}
-                              variant="outlined" sx={{ marginLeft: '14rem', marginBottom: '6px', height: 'fit-content' }}>
-                              X
-                            </Button> : ''}
-                          <Button sx={{ width: '100%' }}
-                            variant="contained"
-                            component="label">
-                            Upload Video
-                            <input
-                              name="alertVideoLink"
-                              onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
-                              //onChange={handleProductImgUpload}
-                              type="file"
-                              hidden
-                            />
-                          </Button>
-                        </Box>)}
+                                    <Button onClick={() => remove()}
+                                      variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
 
-                        {fileType == 'EXCEL' && (<Box mb={3}>
-                          {fileLink ?
+                                      X
 
-                            <Box sx={{ wordWrap: "break-word", maxWidth: '100vw' }}>
-                              {fileLink}
-                            </Box> : ''}
-                          {fileLink ?
+                                    </Button>
 
-                            <Button onClick={() => remove()}
-                              variant="outlined" sx={{ marginLeft: '14rem', marginBottom: '6px', height: 'fit-content' }}>
-                              X
-                            </Button> : ''}
-                          <Button sx={{ width: '100%' }}
-                            variant="contained"
-                            component="label">
-                            Upload Excel
-                            <input
-                              name="alertExcelLink"
+                                  </Box>
+                                  :
+                                  null
+                              }
+                              
+                              <Button sx={{width:'100%'}}
+                                variant="outlined"
+                                component="label">
 
-                              onChange={(event) => handleProductImgUpload(event, 'EXCEL')}
-                              type="file"
-                              hidden
-                            />
-                          </Button>
-                        </Box>)
+                                Upload image
+
+                                <input  
+                                name="alertimgageLink"
+                                onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
+                                type="file"
+                                hidden
+                                />
+
+                              </Button>
+                            </Box>
+                          )
                         }
 
+                        {
+                          (fileType=="VIDEO" || fileType==null) 
+                          && 
+                          (
+                            <Box mb={3}>
+                              {
+                                fileLink?
+                          
+                                  <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
+                                    VIDEO added Successfully
+
+                                    <Button onClick={() => remove()}
+                                      variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
+
+                                      X
+
+                                    </Button>
+
+                                  </Box>
+                                  :
+                                  null
+                              }
+
+        
+                              <Button sx={{width:'100%'}}
+                                variant="outlined"
+                                component="label">
+
+                                Upload Video
+
+                                <input  
+                                  name="alertVideoLink"
+                                  onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
+                                  type="file"
+                                  hidden
+                                />
+
+                              </Button>
+                            </Box>
+                          )
+                        }
+
+                        {
+                          (fileType=="EXCEL" || fileType==null) 
+                          && 
+                          (
+                            <Box mb={3}>
+                              {
+                                fileLink?
+                          
+                                  <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
+                                    
+                                    Excel added Successfully
+
+                                    <Button onClick={() => remove()}
+                                      variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
+
+                                      X
+
+                                    </Button>
+
+                                  </Box>
+                                  :
+                                  null
+                              }
+                              
+                              <Button sx={{width:'100%'}}
+                                variant="outlined"
+                                component="label">
+
+                                Upload Excel
+
+                                <input  
+                                  name="alertExcelLink"
+                                  onChange={(event) => handleProductImgUpload(event, 'EXCEL')}
+                                  type="file"
+                                  hidden
+                                />
+
+                              </Button>
+                            </Box>
+                          )
+                        }
+                        
                         <Button type="submit" variant="contained" color="primary" fullWidth>
                           Send
                         </Button>
 
-
                       </form>
-                    </ Box> : null
+                    </ Box> 
+                    :
+                    null
                 }
               </Box>
             </Box>
