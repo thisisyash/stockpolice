@@ -470,4 +470,29 @@ export const getInputTheme = () => {
     }
   }
 }
+
+
+export const sendNewStatus = (async(data) => {
+  console.log("data",data)
+  const statusCollRef = collection(db, 'status'),
+        statusId = doc(statusCollRef).id
+  data.uid = statusId
+  return new Promise(async(resolve, reject) => {
+    const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/sendStatus`, {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      "body": JSON.stringify(data)
+    }).then((response) => response.json())
+    .then(function(data) { 
+      resolve(data)
+    })
+    .catch((error) => {
+      console.log(error)
+      reject(error)
+    }); 
+  })
+})
   

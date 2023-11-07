@@ -24,6 +24,7 @@ import { App as CapApp } from '@capacitor/app';
 import { CapacitorUpdater } from '@capgo/capacitor-updater'
 import { PushNotifications } from '@capacitor/push-notifications';
 import AlertViews from './pages/AlertViews';
+import SendStatus from './pages/SendStatus';
 
 let updateData = null
 
@@ -111,6 +112,7 @@ function App() {
               <Route path="/messages" element={<Messages />}/>
               <Route path="/bannersUpload" element={<BannersUpload />}/>
               <Route path="/alertViews" element={<AlertViews />}/>
+              <Route path="/sendStatus" element={<SendStatus />}/>
 
             </Route>
 

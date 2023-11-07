@@ -120,6 +120,15 @@ function AdminPanel() {
               </Button>
             </Paper>
           </Grid>
+          <Grid item xs>
+            <Paper style={styles.contentCard} onClick={() => navigate('/sendStatus')}>
+              <ViewCarouselIcon 
+              fontSize='large'/>
+              <Button>
+                Send Status
+              </Button>
+            </Paper>
+          </Grid>
 
         </Grid>
       </Box>
