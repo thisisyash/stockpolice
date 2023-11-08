@@ -495,4 +495,26 @@ export const sendNewStatus = (async(data) => {
     }); 
   })
 })
+
+
+export const getViewStatus = (async(fromTs, toTs) => {
+  return new Promise((resolve, reject) => {
+    
+    getDocs(query( collection(db, `status`),
+                   where('timeStamp', '<', toTs),
+                   where('timeStamp', '>', fromTs),
+                   orderBy('timeStamp', 'desc')
+                 )
+            ).then((querySnapshot) => {
+      let eventItems = []
+      querySnapshot.forEach((doc) => {
+          eventItems.push(doc.data()) 
+             
+      })
+      resolve(eventItems)
+    }).catch(()=> {
+      reject([])
+    })
+  })
+})
   

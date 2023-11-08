@@ -44,6 +44,9 @@ function Sidebar() {
        <Box sx={boxSX} onClick={() => navigate("/alerts")}>
           Alerts
        </Box>
+       <Box sx={boxSX} onClick={() => navigate("/viewStatus")}>
+          Status
+       </Box>
        {
          isUserAdmin() ? <>
           <Box sx={boxSX} onClick={() => navigate("/uploadContacts")}>

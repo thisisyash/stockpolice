@@ -43,9 +43,12 @@ function BottomNavBar() {
             navigate("/alerts")
             break;
           case 2:
-            navigate("/profile")
+            navigate("/viewStatus")
             break;
           case 3:
+            navigate("/profile")
+            break;
+          case 4:
             navigate("/adminPanel")
             break;
           default:
@@ -55,6 +58,7 @@ function BottomNavBar() {
       showLabels>
       <BottomNavigationAction label="Home" icon={<HomeIcon />}/> 
       <BottomNavigationAction label="Alerts" icon={<NotificationsActiveIcon />}/> 
+      <BottomNavigationAction label="Status" icon={<NotificationsActiveIcon />}/> 
       <BottomNavigationAction label="Profile" icon={<PersonIcon />}/>
       {
         isUserAdmin() ? 
