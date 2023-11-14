@@ -517,4 +517,28 @@ export const getViewStatus = (async(fromTs, toTs) => {
     })
   })
 })
+
+
+export const deleteStatusdoc = ((uid) => {
+  const statusCollRef = collection(db, 'status')
+  return new Promise((resolve, reject)=> {
+    deleteDoc(doc(statusCollRef, uid)).then((querySnapshot) => {
+      resolve()
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
+
+
+export const updateStatusViews = ((statusData) => {
+  const statusCollRef = collection(db, 'status')
+  return new Promise((resolve, reject)=> {
+    updateDoc(doc(statusCollRef, statusData.uid), {statusViews : statusData.statusViews}).then((querySnapshot) => {
+      resolve({})
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})
   

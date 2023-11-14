@@ -26,6 +26,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import AlertViews from './pages/AlertViews';
 import SendStatus from './pages/SendStatus';
 import ViewStatus from './pages/ViewStatus';
+import StatusViews from './pages/StatusViews';
 
 let updateData = null
 
@@ -115,6 +116,7 @@ function App() {
               <Route path="/alertViews" element={<AlertViews />}/>
               <Route path="/sendStatus" element={<SendStatus />}/>
               <Route path="/viewStatus" element={<ViewStatus />}/>
+              <Route path="/statusViews" element={<StatusViews />}/>
 
 
             </Route>

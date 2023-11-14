@@ -1,12 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews, getViewStatus } from '../services/api'
-import { Button, Box, Paper, TextField, Grid, Container, Icon} from '@mui/material'
+import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews, getViewStatus, deleteStatusdoc, updateStatusViews } from '../services/api'
+import { Button, Box, Paper, TextField, Grid, Container, Icon, Snackbar} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
 import { useForm } from "react-hook-form";
 import Modal from '@mui/material/Modal';
+
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -19,10 +20,24 @@ import { Capacitor } from '@capacitor/core'
 import {NativeAudio} from '@capacitor-community/native-audio'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { NavigateBeforeRounded } from '@mui/icons-material'
+import { Carousel } from 'react-responsive-carousel'
 
 
 
 const useStyles = makeStyles((theme) => ({
+  
+  carouselContainer: {
+    marginBottom: '20px',
+    borderRadius: '5px',
+    boxShadow: '0px 0px 5px 2px #30bbff',
+  },
+
+  statusImage: {
+    width: '100%',
+    height: 'auto',
+    borderRadius: '5px',
+  },
+  
   apptCont : {
     display:'flex',
     padding:'10px',
@@ -79,9 +94,11 @@ function ViewStatus() {
   const navigate = useNavigate()
   const classes = useStyles()
   const [loading, setLoading] = useState(true)
+  const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
   const { register : registerEditAlert, handleSubmit : submitAlertEdit, reset : resetEditAlert, formState : {errors:editErrors} } = useForm()
   const [status, setStatus] = useState([])
   const [fromTs, setFromTs] = useState(new Date(new Date().setHours(0,0,0,0)).getTime())
+  const {getUserId, logout, isUserAdmin} = useContext(AuthContext)
 
   useEffect(() => {
 
@@ -99,11 +116,77 @@ function ViewStatus() {
  
   const getTodayStatus = (fromTs) => {
     setFromTs(new Date(new Date().setHours(0,0,0,0)).getTime())
-    getViewStatus(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime()).then((response => {
+    getUserData(getUserId(), true).then((resp) => {
+      if (resp.multiLoginError) {
+        logout(resp)
+        return
+      }
+      getViewStatus(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime()).then((response => {
+        console.log(response)
+        setStatus(response)
+  
+        const userData = {
+          name       : resp.userName,
+          viewedOn   : new Date().toLocaleString(),
+          clientCode : resp.clientCode
+        }
+  
+        response.forEach((status) => {
+          
+
+          if (status.statusViews) {
+
+            if (status.statusViews.some((statusView) => statusView.clientCode == resp.clientCode)) {
+              //Status view already recorded. Nothing to do
+            } else {
+              const params = {
+                uid        : status.uid,
+                statusViews : status.statusViews.concat(userData)
+              }
+              // //If user has not viewed then call this api
+              updateStatusViews(params).then((response) => {
+                //Status views updated successfully
+              }).catch((err) => {
+                //Error in updating status views
+              })
+            }           
+          } else {
+
+            const params = {
+              uid        : status.uid,
+              statusViews : [userData]
+            }
+              updateStatusViews(params).then((response) => {
+                //Status views updated successfully
+              }).catch((err) => {
+                //Error in updating alert views
+              })
+          }
+
+        })
+  
+  
+        setLoading(false)     
+      }))
       
-      setStatus(response)
-      setLoading(false)     
-    }))
+    })
+    
+  }
+
+  async function deleteStatus(status){
+
+    
+   
+    // //If user has not viewed then call this api
+    deleteStatusdoc(status.uid).then((response) => {
+      showLoader()
+      showSnackbar('Deleted Successfully', 'success');
+      hideLoader()
+      return; 
+      //Alert views updated successfully
+    }).catch((err) => {
+      //Error in updating alert views
+    })
   }
   
 
@@ -131,18 +214,57 @@ function ViewStatus() {
                               return <Box key={newIndex} sx={{boxShadow:'0px 0px 5px 2px #30bbff'}} className={classes.apptCont}>
                                    <Box>
                                     {
-                                        status.topic=='desc' 
+                                        (status.topic=='desc' &&
+                                          (
+                                            <Box> 
+                                              <div dangerouslySetInnerHTML={{__html:status.body}}/>
+                                            </Box>
+                                          )
+                                        )
                                         
-                                        ?
-
-                                        <Box> 
-                                          <div dangerouslySetInnerHTML={{__html:status.body}}/>
-                                        </Box>
-                                        :
-                                        <Box sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
-                                            <img className={classes.prodImg} style={{maxWidth: '-webkit-fill-available'}} src={status.fileLink??''} alt="Product Image" />
-                                        </Box>
                                     }
+
+                                        
+                                    {
+                                      (status.topic=='image' &&
+                                        (
+                                          <Box sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+                                            <img className={classes.prodImg} style={{maxWidth: '-webkit-fill-available'}} src={status.fileLink??''} alt="Product Image" />
+                                            
+                                          </Box>
+                                          
+                                        )
+                                      )
+                                    }
+                                    {
+                                      (status.topic=='video' &&
+                                        (
+                                          <video style={{maxWidth: '-webkit-fill-available'}} className={classes.prodVideo} controls>
+                                            <source src={status.fileLink??''} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                          </video>
+                                        )
+                                      )
+                                    }
+                                    
+                                    <Box>
+                                    <Box className={classes.apptLabel}> 
+                                      {new Date(status.timeStamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                                    </Box>
+                                    {
+                                      isUserAdmin() ? 
+                                      <Box mt={2}>
+                                        <Button variant="contained" onClick={() => deleteStatus(status)}>
+                                          Delete
+                                        </Button>
+                                        <Button variant="contained" onClick={() => navigate('/statusViews', {state : status})}> 
+                                          Read Receipts 
+                                        </Button>
+
+                                      </Box> : null
+                                    }
+                                  
+                                  </Box>
                                     
                                   </Box>
                                   
@@ -156,6 +278,8 @@ function ViewStatus() {
                             No Status Found
                           </Box>
               }
+
+
             
         
         

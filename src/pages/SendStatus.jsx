@@ -131,7 +131,30 @@ function SendStatus() {
         }
       }
       
-    } 
+    } else if (filetype == "VIDEO") {
+
+      const file = e.target.files[0];
+      if (file) {
+
+        const allowedFormats = ['mp4', 'avi', 'mov', 'mkv', 'wmv'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (allowedFormats.includes(fileExtension)) {
+
+          fileName = `alert-${Date.now()}.mp4`
+
+        } else {
+      
+          showSnackbar('Invalid video format. Allowed formats: mp4, avi, mov, mkv, wmv', 'error');
+          e.target.value = '';
+          setFileLink('');
+          hideLoader()
+          return;
+
+        }
+
+      }
+      
+    }
     setFileType(filetype);
     showLoader()
     
@@ -181,8 +204,9 @@ function SendStatus() {
                           autoWidth
                           value={selectedGroup}
                           onChange={handleChange}>
-                          <MenuItem key="image" value="image">Image</MenuItem>
                           <MenuItem key="desc" value="desc">Description</MenuItem>
+                          <MenuItem key="image" value="image">Image</MenuItem>
+                          <MenuItem key="video" value="video">Video</MenuItem>
                         </Select>
                       </FormControl>
                     </Box>
@@ -195,60 +219,116 @@ function SendStatus() {
                       <h5>Enter Status data</h5>
                       <form onSubmit={handleSubmit(onFormSubmit)}>
                         {
-                          selectedGroup =='desc' ?
-                          
-                          <Box mb={15} style={{ display: "grid", justifyContent: "left", height: 300 }}>
+                          (selectedGroup =='desc' &&
+                            (
                             
-                            <ReactQuill
-                              theme="snow"
-                              modules={modules}
-                              formats={formats}
-                              value={body}
-                              placeholder="Enter status description...."
-                              onChange={handleQuillChange}
-                              style={{ height: "220" }}
-                              name="body"
-                            >
-                            </ReactQuill>
-                          
-                          </Box> 
-                            :
-                          <Box mb={3}>
-                            {
-                              fileLink?
-
-                                <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
-
-                                  IMAGE added Successfully
-
-                                  <Button onClick={() => remove()}
-                                    variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
-
-                                    X
-
-                                  </Button>
-
-                                </Box>
-                                :
-                                null
-                            }
-                            
-                            <Button sx={{width:'100%'}}
-                              variant="outlined"
-                              component="label">
-
-                              Upload image
-
-                              <input  
-                              name="alertimgageLink"
-                              onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
-                              type="file"
-                              hidden
-                              />
-
-                            </Button>
-                          </Box>
+                              <Box mb={15} style={{ display: "grid", justifyContent: "left", height: 300 }}>
+                                
+                                <ReactQuill
+                                  theme="snow"
+                                  modules={modules}
+                                  formats={formats}
+                                  value={body}
+                                  placeholder="Enter status description...."
+                                  onChange={handleQuillChange}
+                                  style={{ height: "220" }}
+                                  name="body"
+                                >
+                                </ReactQuill>
+                              
+                              </Box>
+                            )
+                          ) 
                         }
+                        {
+                            (selectedGroup =='image' &&
+                              (
+                                <Box mb={3}>
+                                  {
+                                    fileLink?
+    
+                                      <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
+    
+                                        IMAGE added Successfully
+    
+                                        <Button onClick={() => remove()}
+                                          variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
+    
+                                          X
+    
+                                        </Button>
+    
+                                      </Box>
+                                      :
+                                      null
+                                  }
+                              
+                                  <Button sx={{width:'100%'}}
+                                    variant="outlined"
+                                    component="label">
+    
+                                    Upload image
+    
+                                    <input  
+                                    name="alertimgageLink"
+                                    onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
+                                    type="file"
+                                    hidden
+                                    />
+    
+                                  </Button>
+                                </Box>
+                              )
+                          
+                            )
+                        }
+                        {
+                          (selectedGroup =='video' &&
+                            (
+
+                            
+                              <Box mb={3}>
+                                {
+                                  fileLink?
+
+                                    <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
+
+                                      Video added Successfully
+
+                                      <Button onClick={() => remove()}
+                                        variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
+
+                                        X
+
+                                      </Button>
+
+                                    </Box>
+                                    :
+                                    null
+                                }
+                              
+                                <Button sx={{width:'100%'}}
+                                  variant="outlined"
+                                  component="label">
+
+                                  Upload Video
+
+                                  <input  
+                                  name="alertVideoLink"
+                                  onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
+                                  type="file"
+                                  hidden
+                                  />
+
+                                </Button>
+                              </Box>
+                            )
+                          )
+                        }
+                          
+                          
+                          
+                        
                         
 
                         
