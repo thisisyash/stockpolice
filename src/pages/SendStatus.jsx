@@ -82,20 +82,14 @@ function SendStatus() {
   }, [])
 
   const handleChange = (event) => {
-    console.log("==data==",event.target.value);
-    setSelectedGroup(event.target.value)
-    
+    setSelectedGroup(event.target.value)    
   }
 
-
   function remove(){
-
     showLoader()
     setFileLink(null)
     setFileType(null)
     hideLoader()
-
-
   }
 
   const handleQuillChange = (content, delta, source, editor) => {
@@ -159,10 +153,8 @@ function SendStatus() {
     showLoader()
     
     uploadAlertNotificationImage(await e.target.files[0].arrayBuffer(), e.target.files[0], fileName, 'alert').then((downloadUrl) => {
-
       setFileLink(downloadUrl)
       hideLoader()
-
     })
 
   }
@@ -192,7 +184,7 @@ function SendStatus() {
       {
         loading ? <ComponentLoader /> :
           <>
-            <h2 className={classes.center}>Send New Notification</h2>
+            <h2 className={classes.center}>Send New Status</h2>
             <Box p={2} className={classes.whiteBg}>
               <Box className={classes.notiCont}>
                 <h5>Please select a type of status</h5>
@@ -216,7 +208,7 @@ function SendStatus() {
                 {
                   selectedGroup !=null ?
                     <Box>
-                      <h5>Enter Status data</h5>
+                      <h5>Enter status text</h5>
                       <form onSubmit={handleSubmit(onFormSubmit)}>
                         {
                           (selectedGroup =='desc' &&
@@ -241,86 +233,63 @@ function SendStatus() {
                           ) 
                         }
                         {
-                            (selectedGroup =='image' &&
+                            ((selectedGroup =='image') &&
                               (
                                 <Box mb={3}>
                                   {
                                     fileLink?
-    
                                       <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
-    
                                         IMAGE added Successfully
-    
                                         <Button onClick={() => remove()}
                                           variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
-    
                                           X
-    
                                         </Button>
-    
                                       </Box>
                                       :
-                                      null
-                                  }
-                              
-                                  <Button sx={{width:'100%'}}
-                                    variant="outlined"
-                                    component="label">
-    
-                                    Upload image
-    
-                                    <input  
-                                    name="alertimgageLink"
-                                    onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
-                                    type="file"
-                                    hidden
-                                    />
-    
-                                  </Button>
+                                      <Button sx={{width:'100%'}}
+                                        variant="outlined"
+                                        component="label">
+                                          Upload image
+                                        <input  
+                                        name="alertimgageLink"
+                                        onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
+                                        type="file"
+                                        hidden
+                                        />
+                                      </Button>
+                                  }          
                                 </Box>
                               )
                           
                             )
                         }
                         {
-                          (selectedGroup =='video' &&
-                            (
-
-                            
+                          ((selectedGroup =='video') &&
+                            (                          
                               <Box mb={3}>
                                 {
                                   fileLink?
-
                                     <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
-
                                       Video added Successfully
-
                                       <Button onClick={() => remove()}
                                         variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
-
                                         X
-
                                       </Button>
-
                                     </Box>
                                     :
-                                    null
+                                    <Button sx={{width:'100%'}}
+                                      variant="outlined"
+                                      component="label">
+                                      Upload Video
+                                      <input  
+                                      name="alertVideoLink"
+                                      onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
+                                      type="file"
+                                      hidden
+                                      />
+                                    </Button>
                                 }
-                              
-                                <Button sx={{width:'100%'}}
-                                  variant="outlined"
-                                  component="label">
 
-                                  Upload Video
-
-                                  <input  
-                                  name="alertVideoLink"
-                                  onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
-                                  type="file"
-                                  hidden
-                                  />
-
-                                </Button>
                               </Box>
                             )
                           )

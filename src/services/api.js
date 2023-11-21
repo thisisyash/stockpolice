@@ -473,10 +473,10 @@ export const getInputTheme = () => {
 
 
 export const sendNewStatus = (async(data) => {
-  console.log("data",data)
   const statusCollRef = collection(db, 'status'),
-        statusId = doc(statusCollRef).id
+        statusId      = doc(statusCollRef).id
   data.uid = statusId
+  
   return new Promise(async(resolve, reject) => {
     const orderResp = await fetch(`${process.env.REACT_APP_SERVER_URL}/sendStatus`, {
       "method": "POST",
@@ -542,3 +542,13 @@ export const updateStatusViews = ((statusData) => {
   })
 })
   
+export const deleteAlert = ((uid) => {
+  const statusCollRef = collection(db, 'alerts')
+  return new Promise((resolve, reject)=> {
+    deleteDoc(doc(statusCollRef, uid)).then((querySnapshot) => {
+      resolve()
+    }).catch((error)=> {
+      reject(error)
+    })
+  })
+})

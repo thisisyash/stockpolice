@@ -88,7 +88,7 @@ function App() {
       })
     }    
 
-    checkNewAppVersions()
+    // checkNewAppVersions()
   }, [])
 
   return (
@@ -117,7 +117,6 @@ function App() {
               <Route path="/sendStatus" element={<SendStatus />}/>
               <Route path="/viewStatus" element={<ViewStatus />}/>
               <Route path="/statusViews" element={<StatusViews />}/>
-
 
             </Route>
 

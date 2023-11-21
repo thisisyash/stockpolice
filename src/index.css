@@ -91,3 +91,7 @@ code {
   width: 100vw;
   justify-content: center;
 }
+
+.MuiSelect-outlined {
+  color: white !important;
+}

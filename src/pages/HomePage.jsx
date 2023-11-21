@@ -14,6 +14,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import { Device } from '@capacitor/device';
+import { CapacitorUpdater } from '@capgo/capacitor-updater'
+import { getViewStatus } from '../services/api'
 
 
 const styles = {
@@ -68,17 +70,28 @@ const styles = {
   }
 }
 
+let updateData = null
+
+
 function HomePage() {
 
   const navigate = useNavigate()
   const [userData, setUserData] = useState({})
   const {getUserId, getDeviceTokenCookie, logout} = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
-  const { showLoader, hideLoader, showAlert, showSnackbar } = useContext(CommonContext)
+  const { showLoader, hideLoader, showAlert, showSnackbar, setBlocker, setUpdatePercent, setStatusColor } = useContext(CommonContext)
   const [videos, setVideos] = useState([])
   const [slidesArr, setSlidesArr] = useState([])
   const [banners, setBanners] = useState([])
   const [update, setUpdate] = useState(false)
+  const [fromTs, setFromTs] = useState(new Date(new Date().setHours(0,0,0,0)).getTime())
+
+
+
+  CapacitorUpdater.addListener('download', (event) => {
+    console.log("***Download in progress***", JSON.stringify(event))
+    setUpdatePercent(event.percent)
+  })
 
   useEffect(() => {
 
@@ -106,29 +119,54 @@ function HomePage() {
       setLoading(false)
     }))
 
-    getGlobals().then((resp) => {
+    getGlobals().then(async(resp) => {
       
-      // if (resp.package != process.env.REACT_APP_VERSION) {
-      //   setUpdate(true)
-      //   return
-      // }
+      if (resp.package != process.env.REACT_APP_VERSION) {
+        setBlocker(true)
 
-      setVideos(resp.videoLinks)
-      setBanners(resp.bannerLinks)
-      let slidesArr = []
-      if (resp.bannerLinks && resp.bannerLinks.length) {
-        resp.bannerLinks.forEach((link) => {
-          let obj = {
-            url : link,
-            childrenElem: <Box onClick={() => openBannerLink(link)} sx={{width:'100%', height:'100%'}} />
-          }
-          slidesArr.push(obj)
+        updateData = await CapacitorUpdater.download({
+          version : resp.package,
+          url     : resp.newBuildUrl
         })
+        
+        await CapacitorUpdater.set(updateData)
+        setBlocker(false)
+        return
+      } else {
+
+        setVideos(resp.videoLinks)
+        setBanners(resp.bannerLinks)
+        let slidesArr = []
+        if (resp.bannerLinks && resp.bannerLinks.length) {
+          resp.bannerLinks.forEach((link) => {
+            let obj = {
+              url : link,
+              childrenElem: <Box onClick={() => openBannerLink(link)} sx={{width:'100%', height:'100%'}} />
+            }
+            slidesArr.push(obj)
+          })
+        }
+        setSlidesArr(slidesArr)
       }
-      setSlidesArr(slidesArr)
+
+      getViewStatus(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime()).then((response => {          
+        response.map((item) => {
+          if(item.statusViews) {
+            item.statusViews.map((user) => {
+              if (user.mobileNo != getUserId())setStatusColor('green')
+            })
+          } else {
+            setStatusColor('green')
+          }
+        })
+      }))
+
+      
     }).catch(() => {
       showAlert("Failed to fetch videos", "error")
     })
+
+
   }, [])
 
   const openUpdateUrl = (number) => {

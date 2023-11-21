@@ -7,6 +7,7 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
 const styles = {
   contentCard : {
@@ -122,7 +123,7 @@ function AdminPanel() {
           </Grid>
           <Grid item xs>
             <Paper style={styles.contentCard} onClick={() => navigate('/sendStatus')}>
-              <ViewCarouselIcon 
+              <ControlPointIcon 
               fontSize='large'/>
               <Button>
                 Send Status

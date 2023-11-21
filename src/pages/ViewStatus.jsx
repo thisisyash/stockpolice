@@ -84,10 +84,7 @@ const useStyles = makeStyles((theme) => ({
 
   ...getInputTheme()
 
-}));
-
-
-
+}))
 
 
 function ViewStatus() {
@@ -108,9 +105,7 @@ function ViewStatus() {
       audioChannelNum: 1,
       isUrl: false
     })
-  
     getTodayStatus(fromTs)
-
   }, [])
 
  
@@ -122,17 +117,17 @@ function ViewStatus() {
         return
       }
       getViewStatus(fromTs, new Date(new Date(fromTs).getTime() + 60 * 60 * 24 * 1000).getTime()).then((response => {
-        console.log(response)
+        // console.log(response)
         setStatus(response)
   
         const userData = {
           name       : resp.userName,
           viewedOn   : new Date().toLocaleString(),
-          clientCode : resp.clientCode
+          clientCode : resp.clientCode,
+          mobileNo   : resp.mobileNo
         }
   
         response.forEach((status) => {
-          
 
           if (status.statusViews) {
 
@@ -164,28 +159,23 @@ function ViewStatus() {
           }
 
         })
-  
-  
+
         setLoading(false)     
       }))
-      
     })
-    
   }
 
   async function deleteStatus(status){
 
-    
-   
-    // //If user has not viewed then call this api
+    showLoader()
     deleteStatusdoc(status.uid).then((response) => {
-      showLoader()
-      showSnackbar('Deleted Successfully', 'success');
+      showSnackbar('Status Deleted Successfully', 'success')
       hideLoader()
-      return; 
-      //Alert views updated successfully
+      getTodayStatus(fromTs)
     }).catch((err) => {
       //Error in updating alert views
+      showAlert('Failed to delete status')
+      hideLoader()
     })
   }
   
@@ -194,14 +184,9 @@ function ViewStatus() {
     <>
     {
       loading ? 
-      <ComponentLoader />:
+      <ComponentLoader /> :
       <Box sx={{background:'black'}}>
-        <h2 className={classes.center}>Status</h2>
-        
-        
-         
-          
-            
+        <h2 className={classes.center}>Status Updates</h2>
               <Box sx={{paddingLeft:'10px'}}>
                 {new Date(fromTs).toDateString() || 'N/A'}
               </Box>
@@ -220,11 +205,8 @@ function ViewStatus() {
                                               <div dangerouslySetInnerHTML={{__html:status.body}}/>
                                             </Box>
                                           )
-                                        )
-                                        
+                                        )                                 
                                     }
-
-                                        
                                     {
                                       (status.topic=='image' &&
                                         (
@@ -254,7 +236,7 @@ function ViewStatus() {
                                     {
                                       isUserAdmin() ? 
                                       <Box mt={2}>
-                                        <Button variant="contained" onClick={() => deleteStatus(status)}>
+                                        <Button variant="contained" sx={{mr:3}} onClick={() => deleteStatus(status)}>
                                           Delete
                                         </Button>
                                         <Button variant="contained" onClick={() => navigate('/statusViews', {state : status})}> 

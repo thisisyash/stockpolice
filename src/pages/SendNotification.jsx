@@ -119,7 +119,7 @@ function SendNotification() {
         const fileExtension = file.name.split('.').pop().toLowerCase();
         if (allowedExtensions.includes(fileExtension)) {
 
-          fileName = `alert-${Date.now()}.jpg`
+          fileName = `alert-${Date.now()}.${fileExtension}`
 
         } else {
       
@@ -140,7 +140,7 @@ function SendNotification() {
         const fileExtension = file.name.split('.').pop().toLowerCase();
         if (allowedFormats.includes(fileExtension)) {
 
-          fileName = `alert-${Date.now()}.mp4`
+          fileName = `alert-${Date.now()}.${fileExtension}`
 
         } else {
       
@@ -159,15 +159,38 @@ function SendNotification() {
       const file = e.target.files[0];
 
       if (file) {
-        const allowedFormats = ['xlsx', 'pdf'];
+        const allowedFormats = ['xls', 'xlsx', 'pdf'];
         const fileExtension = file.name.split('.').pop().toLowerCase();
         if (allowedFormats.includes(fileExtension)) {
 
-          fileName = `alert-${Date.now()}.xlsx`
+          fileName = `alert-${Date.now()}.${fileExtension}`
   
         } else {
 
           showSnackbar('Invalid file format. Allowed formats: xlsx (Excel) and pdf (PDF)', 'error');
+          e.target.value = '';
+          setFileLink('');
+          hideLoader()
+          return;
+
+        }
+
+      }
+      
+    } else if(filetype == "AUDIO"){
+
+      const file = e.target.files[0];
+
+      if (file) {
+        const allowedFormats = ['mp3', 'wav'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (allowedFormats.includes(fileExtension)) {
+
+          fileName = `alert-${Date.now()}.${fileExtension}`
+  
+        } else {
+
+          showSnackbar('Invalid file format. Allowed formats: mp3 and wav', 'error');
           e.target.value = '';
           setFileLink('');
           hideLoader()
@@ -191,6 +214,11 @@ function SendNotification() {
   }
 
   function onFormSubmit(data) {
+
+    if (!alertBody || !body) {
+      showSnackbar("Please enter alert data")
+      return
+    }
 
     showLoader()
 
@@ -224,7 +252,7 @@ function SendNotification() {
                 <h5>Please select a group to send notification</h5>
                 {
                   groups?.length ?
-                    <Box sx={{ maxWidth: 120, border:'1px solid white', borderRadius:'5px'}}>
+                    <Box sx={{ maxWidth: '200px', border:'1px solid white', borderRadius:'5px'}}>
                       <FormControl fullWidth>
                         <Select
                           autoWidth
@@ -253,7 +281,6 @@ function SendNotification() {
                       <form onSubmit={handleSubmit(onFormSubmit)}>
 
                         <Box mb={15} style={{ display: "grid", justifyContent: "left", height: 300 }}>
-
                           <ReactQuill
                             theme="snow"
                             modules={modules}
@@ -271,125 +298,119 @@ function SendNotification() {
                         {
                           (fileType=="IMAGE" || fileType==null) 
                           && 
-                          (
-                            <Box mb={3}>
+                          (<Box mb={3}>
                               {
-                                fileLink?
-
+                                fileLink ?
                                   <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
-
                                     IMAGE added Successfully
-
                                     <Button onClick={() => remove()}
                                       variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
-
                                       X
-
                                     </Button>
-
                                   </Box>
                                   :
-                                  null
-                              }
-                              
-                              <Button sx={{width:'100%'}}
-                                variant="outlined"
-                                component="label">
-
-                                Upload image
-
-                                <input  
-                                name="alertimgageLink"
-                                onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
-                                type="file"
-                                hidden
-                                />
-
-                              </Button>
-                            </Box>
-                          )
+                                  <Button 
+                                    variant="outlined"
+                                    component="label">
+                                    Upload image
+                                    <input  
+                                    name="alertimgageLink"
+                                    onChange={(event) => handleProductImgUpload(event, 'IMAGE')}
+                                    type="file"
+                                    hidden
+                                  />
+                                  </Button>
+                              }                          
+                            </Box>)
                         }
 
                         {
                           (fileType=="VIDEO" || fileType==null) 
                           && 
-                          (
-                            <Box mb={3}>
+                          (<Box mb={3}>
                               {
-                                fileLink?
-                          
+                                fileLink ?
                                   <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
                                     VIDEO added Successfully
-
                                     <Button onClick={() => remove()}
                                       variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
-
                                       X
-
                                     </Button>
-
                                   </Box>
                                   :
-                                  null
+                                  <Button
+                                    variant="outlined"
+                                    component="label">
+                                    Upload Video
+                                    <input  
+                                      name="alertVideoLink"
+                                      onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
+                                      type="file"
+                                      hidden
+                                    />
+                                  </Button>
                               }
-
-        
-                              <Button sx={{width:'100%'}}
-                                variant="outlined"
-                                component="label">
-
-                                Upload Video
-
-                                <input  
-                                  name="alertVideoLink"
-                                  onChange={(event) => handleProductImgUpload(event, 'VIDEO')}
-                                  type="file"
-                                  hidden
-                                />
-
-                              </Button>
-                            </Box>
-                          )
+                              
+                          </Box>)
                         }
 
                         {
                           (fileType=="EXCEL" || fileType==null) 
                           && 
-                          (
-                            <Box mb={3}>
+                          (<Box mb={3}>
                               {
-                                fileLink?
-                          
+                                fileLink ?
                                   <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
-                                    
                                     Excel added Successfully
-
                                     <Button onClick={() => remove()}
                                       variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
-
                                       X
-
                                     </Button>
-
                                   </Box>
                                   :
-                                  null
-                              }
-                              
-                              <Button sx={{width:'100%'}}
-                                variant="outlined"
-                                component="label">
+                                  <Button 
+                                    variant="outlined"
+                                    component="label">
+                                    Upload Excel
+                                    <input  
+                                      name="alertExcelLink"
+                                      onChange={(event) => handleProductImgUpload(event, 'EXCEL')}
+                                      type="file"
+                                      hidden
+                                    />
+                                  </Button>
+                              }                       
+                            </Box>
+                          )
+                        }
 
-                                Upload Excel
 
-                                <input  
-                                  name="alertExcelLink"
-                                  onChange={(event) => handleProductImgUpload(event, 'EXCEL')}
-                                  type="file"
-                                  hidden
-                                />
-
-                              </Button>
+                        {
+                          (fileType=="AUDIO" || fileType==null) 
+                          && 
+                          (<Box mb={3}>
+                              {
+                                fileLink ?
+                                  <Box sx={{wordWrap:"break-word", maxWidth:'100vw'}}>
+                                    Audio file added Successfully
+                                    <Button onClick={() => remove()}
+                                      variant="outlined" sx={{float:'right',marginBottom:'15px', height:'fit-content'}}>
+                                      X
+                                    </Button>
+                                  </Box>
+                                  :
+                                  <Button 
+                                    variant="outlined"
+                                    component="label">
+                                    Upload Audio
+                                    <input  
+                                      name="alertAudioLink"
+                                      onChange={(event) => handleProductImgUpload(event, 'AUDIO')}
+                                      type="file"
+                                      hidden
+                                    />
+                                  </Button>
+                              }                       
                             </Box>
                           )
                         }

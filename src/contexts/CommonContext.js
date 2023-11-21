@@ -14,6 +14,12 @@ export const CommonProvider = (props) => {
   const [snackbarText, setSnackbarText] = useState('')
   const [snackbarType, setSnackbarType] = useState('success')
 
+  const [blocker, setBlocker] = useState(false)
+  const [updatePercent, setUpdatePercent] = useState(10)
+
+  const [statusColor, setStatusColor] = useState('')
+
+
   const showLoader = (loadingText) => {
     setLoadingText(loadingText)
     setLoader(true)
@@ -60,7 +66,13 @@ export const CommonProvider = (props) => {
     showSnackbar,
     hideSnackbar,
     snackbarType,
-    setSnackbarType
+    setSnackbarType,
+    blocker, 
+    setBlocker,
+    updatePercent,
+    setUpdatePercent,
+    statusColor,
+    setStatusColor
   }
 
   return <CommonContext.Provider value={value}> {props.children} </CommonContext.Provider>

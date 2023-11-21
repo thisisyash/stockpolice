@@ -10,11 +10,13 @@ import { AuthContext } from '../contexts/AuthContext'
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { makeStyles } from "@mui/styles";
-
+import DataUsageIcon from '@mui/icons-material/DataUsage';
+import { CommonContext } from '../contexts/CommonContext';
 
 const useStyles = makeStyles((theme) => ({
   navBarCont : {
-    width:'100%', 
+    width:'100vw',
+    overflowX:'scroll', 
     position:'absolute', 
     bottom:0, height:'7vh', 
     boxShadow:'0px -3px 10px -5px #ffffff',
@@ -28,6 +30,7 @@ function BottomNavBar() {
   const classes = useStyles()
   const [activeIndex, setActiveIndex] = useState(0)
   const {isUserAdmin} = useContext(AuthContext)
+  const {statusColor} = useContext(CommonContext)
 
   const navigate    = useNavigate()
   return (
@@ -58,7 +61,7 @@ function BottomNavBar() {
       showLabels>
       <BottomNavigationAction label="Home" icon={<HomeIcon />}/> 
       <BottomNavigationAction label="Alerts" icon={<NotificationsActiveIcon />}/> 
-      <BottomNavigationAction label="Status" icon={<NotificationsActiveIcon />}/> 
+      <BottomNavigationAction label="Status" icon={<DataUsageIcon sx={{color:`${statusColor}`}} />}/> 
       <BottomNavigationAction label="Profile" icon={<PersonIcon />}/>
       {
         isUserAdmin() ? 

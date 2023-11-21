@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
-import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews } from '../services/api'
+import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews, deleteAlert } from '../services/api'
 import { Button, Box, Paper, TextField, Grid, Container, Icon} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
@@ -227,7 +227,8 @@ function Alerts() {
         const userData = {
           name       : resp.userName,
           viewedOn   : new Date().toLocaleString(),
-          clientCode : resp.clientCode
+          clientCode : resp.clientCode,
+          mobileNo   : resp.mobileNo
         }
 
         //Looping all alerts
@@ -273,6 +274,20 @@ function Alerts() {
     showLoader()
     setFromTs(new Date(new Date(fromTs).getTime() - 60 * 60 * 24 * 1000).getTime())
     getDateWiseAlerts(new Date(new Date(fromTs).getTime() - 60 * 60 * 24 * 1000).getTime(), false)
+  }
+
+  const handleDeleteAlert = (alert) => {
+    showLoader()
+    deleteAlert(alert.uid).then((response) => {
+      showSnackbar('Alert Deleted Successfully', 'success')
+      hideLoader()
+      getDateWiseAlerts(fromTs, true)
+    }).catch((err) => {
+      //Error in updating alert views
+      showAlert('Failed to delete alert')
+      hideLoader()
+    })
+
   }
 
   return (
@@ -372,11 +387,21 @@ function Alerts() {
                               (
                                 <a
                                   href={alert.fileLink}
-                                  download="your-excel-file.xlsx"
+                                  download="stockpolice-excel-file.xlsx"
                                 >
                                   Download Excel File
                                 </a>
                               )
+                              :
+                              null
+                          }
+
+                          {
+                            alert.fileType === 'AUDIO' ? 
+                              <audio controls
+                              controlslist="nofullscreen nodownload noremoteplayback noplaybackrate foobar">
+                                <source src={alert.fileLink} type="audio/mpeg" />
+                              </audio>                          
                               :
                               null
                           }
@@ -394,8 +419,13 @@ function Alerts() {
                             <Button variant="contained" onClick={() => selectAlertToEdit(alert)} sx={{marginRight:'10px'}}>
                               Edit
                             </Button>
-                            <Button variant="contained" onClick={() => navigate('/alertViews', {state : alert})}> 
-                              Views 
+                            <Button variant="contained" onClick={() => navigate('/alertViews', {state : alert})}
+                            sx={{marginRight:'10px'}}> 
+                              Read Receipts 
+                            </Button>
+                            <Button variant="contained" onClick={() => handleDeleteAlert(alert)}
+                              sx={{marginTop:'10px'}}> 
+                              Delete 
                             </Button>
 
                           </Box> : null
