@@ -61,8 +61,13 @@ function StatusViews() {
   return (
     <>
       <Box sx={{ background: 'black', padding: '4vw' }}>
-        <h2 className={classes.center}>Status Views</h2>
-        
+        <h2 className={classes.center}>Status Views ({viewsData?.length})</h2>
+        <Box mb={3}>
+          <Button onClick={() => handleDownloadExcel()} variant="contained" color="primary" fullWidth 
+            sx={{mt:2}}>
+            Download Excel
+          </Button>
+        </Box>
         <Grid>
           {viewsData.length ? (
             viewsData.map((view, index) => (
@@ -91,12 +96,7 @@ function StatusViews() {
             <Paper sx={{ padding: '10px' }}>No Views Found</Paper>
           )}
         </Grid>
-        <Box mb={3}>
-          <Button onClick={() => handleDownloadExcel()} variant="contained" color="primary" fullWidth 
-            sx={{mt:2}}>
-            Download Excel
-          </Button>
-        </Box>
+
         
       </Box>
     </>

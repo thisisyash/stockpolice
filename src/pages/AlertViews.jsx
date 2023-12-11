@@ -7,6 +7,7 @@ import ViewCarouselIcon from '@mui/icons-material/ViewCarousel'
 import { useLocation } from 'react-router-dom'
 import { saveAs } from 'file-saver'
 import XLSX from 'xlsx'
+import { Capacitor } from '@capacitor/core'
 
 
 
@@ -58,7 +59,13 @@ function AlertViews() {
   return (
     <>
       <Box sx={{background:'black', padding:'4vw'}}>
-        <h2 className={classes.center}>Read Receipts</h2>
+        <h2 className={classes.center}>Read Receipts ({location.state.alertViews?.length})</h2>
+        <Box mb={3}>
+            <Button onClick={handleDownloadExcel} variant="contained" color="primary" fullWidth
+            sx={{mt:2}}>
+              Download Excel
+            </Button>
+          </Box>
         <Grid>
             {
               location.state.alertViews && location.state.alertViews.length ? 
@@ -93,13 +100,7 @@ function AlertViews() {
               </Paper>
             }
           </Grid>
-          <Box mb={3}>
-            <Button onClick={handleDownloadExcel} variant="contained" color="primary" fullWidth
-            sx={{mt:2}}>
-              
-              Download Excel
-            </Button>
-          </Box>
+
       </Box>    
     </>
   )
