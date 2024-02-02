@@ -5,6 +5,8 @@ import BottomNavBar from './BottomNavBar'
 import { AuthContext } from '../contexts/AuthContext'
 import Sidebar from './Sidebar'
 import whatsapplogo from '../assets/whatsapp.png'
+import { QuestionAnswer } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 
 
 const styles = {
@@ -26,11 +28,24 @@ const styles = {
     right:'2vw',
     bottom:'9vh',
     zIndex:'22'
+  },
+  chatCont : {
+    width:'50px',
+    height:'50px',
+    position:'absolute',
+    right:'2vw',
+    bottom:'9vh',
+    zIndex:'22',
+    background:'black',
+    borderRadius:'50%',
+    padding:'5px',
+    border:'1px solid white'
   }
 }
 
 function RequireAuth({props}) {
 
+  const navigate = useNavigate()
   const [isDesktop, setIsDesktop] = useState(
     window.matchMedia("(min-width: 768px)").matches
   )
@@ -67,9 +82,16 @@ function RequireAuth({props}) {
     return <>
       <div>
         <div style={isDesktop ? styles.desktopCont : styles.mobileCont}>
-          <div onClick={whatsappMe}>
+          {
+            (window.location.pathname == '/userChat' || window.location.pathname == '/messenger' )? null :  
+            <div onClick={() => navigate(isUserAdmin() ? '/messenger' : '/userChat')}>
+            <QuestionAnswer  style={styles.chatCont}
+               fontSize='small'/>
+           </div>
+          }
+          {/* <div onClick={whatsappMe}>
             <img src={whatsapplogo} style={styles.whatsappCont}/>
-          </div>
+          </div> */}
           <Outlet />
         </div>
         <div>

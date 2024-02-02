@@ -552,3 +552,23 @@ export const deleteAlert = ((uid) => {
     })
   })
 })
+
+
+//APIs related to Chat
+export const getChats = (async() => {
+  return new Promise((resolve, reject) => {
+    getDocs(query(collection(db, `chats`))).then((querySnapshot) => {
+      let eventItems = []
+       console.log("=========here")
+      querySnapshot.forEach((doc) => {
+        console.log("=========", doc.data())
+        eventItems.push(doc.data())      
+      })
+      resolve(eventItems)
+    }).catch((error)=> {
+      console.log("====", error)
+      reject(error)
+    })
+  })
+})
+

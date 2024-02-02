@@ -102,15 +102,15 @@ function AdminPanel() {
             </Paper>
           </Grid>
 
-          {/* <Grid item xs>
-            <Paper style={styles.contentCard} onClick={() => navigate('/messages')}>
+          <Grid item xs>
+            <Paper style={styles.contentCard} onClick={() => navigate('/messenger')}>
               <QuestionAnswerIcon 
               fontSize='large'/>
               <Button>
                 Messages
               </Button>
             </Paper>
-          </Grid> */}
+          </Grid>
 
           <Grid item xs>
             <Paper style={styles.contentCard} onClick={() => navigate('/bannersUpload')}>

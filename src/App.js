@@ -27,6 +27,9 @@ import AlertViews from './pages/AlertViews';
 import SendStatus from './pages/SendStatus';
 import ViewStatus from './pages/ViewStatus';
 import StatusViews from './pages/StatusViews';
+import Messenger from './pages/Messenger';
+import UserChat from './pages/UserChat';
+import NewMessage from './pages/NewMessage';
 
 let updateData = null
 
@@ -117,6 +120,9 @@ function App() {
               <Route path="/sendStatus" element={<SendStatus />}/>
               <Route path="/viewStatus" element={<ViewStatus />}/>
               <Route path="/statusViews" element={<StatusViews />}/>
+              <Route path="/messenger" element={<Messenger />}/>
+              <Route path="/userChat" element={<UserChat />}/>
+              <Route path="/newMessage" element={<NewMessage />}/>
 
             </Route>
 
