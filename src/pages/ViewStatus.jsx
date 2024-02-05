@@ -3,17 +3,17 @@ import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
 import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews, getViewStatus, deleteStatusdoc, updateStatusViews } from '../services/api'
 import { Button, Box, Paper, TextField, Grid, Container, Icon, Snackbar, keyframes} from '@mui/material'
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/styles"
 import { getGroups } from '../services/api'
-import { useForm } from "react-hook-form";
-import Modal from '@mui/material/Modal';
+import { useForm } from "react-hook-form"
+import Modal from '@mui/material/Modal'
 
 import {
   ActionPerformed,
   PushNotificationSchema,
   PushNotifications,
   Token,
-} from '@capacitor/push-notifications';
+} from '@capacitor/push-notifications'
 import { CommonContext } from '../contexts/CommonContext'
 import NotiAlert from '../components/NotiAlert'
 import { Capacitor } from '@capacitor/core'
@@ -21,9 +21,8 @@ import {NativeAudio} from '@capacitor-community/native-audio'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { NavigateBeforeRounded } from '@mui/icons-material'
 import { Carousel } from 'react-responsive-carousel'
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import styled from '@emotion/styled'
-
 
 
 const ContainerBox = styled(Box)(()=>({
@@ -34,13 +33,8 @@ const NavBar = styled(Box)(()=>({
   display : 'flex',
   justifyContent : 'space-between',
   gap : '5px',
- 
+  margin : '10px',
 }))
-
-
-
-
-
 
 const useStyles = makeStyles((theme) => ({
   
@@ -52,16 +46,16 @@ const useStyles = makeStyles((theme) => ({
     borderRadius:'5px',
     width : '100%',
     maxWidth : '500px',
-    height : '50vh'
+    
   },
   prodImg : {
     width : '100%',
-    height : 'auto'
+    height : '70vh'
   },
 
   apptLabel: {
     fontSize:'18px',
-    marginTop:'10px',
+    marginBottom:'10px',
     fontWeight:'280',
     textAlign : 'center'
   },
@@ -101,21 +95,19 @@ const useStyles = makeStyles((theme) => ({
   },
 
   ...getInputTheme()
-
 }))
 
 
 
 const moveAnimation =keyframes`
-
   0%  {
-    border-color : white;
-    transform: scaleX(0);
+    border-color : white
+    transform: scaleX(0)
   }
   100% {
-    border-color : white;
-    transform: scaleX(1);
-};
+    border-color : white
+    transform: scaleX(1)
+}
 `
 
 
@@ -131,9 +123,6 @@ function ViewStatus() {
   const [currentStatusIndex , setCurrentStatusIndex] = useState(0)
   
   
-
-
-
   const NavStatusBar = styled(Box)(({statusIndex , animate })=>({
     position : 'relative',
     border : '2px solid gray',
@@ -155,14 +144,9 @@ function ViewStatus() {
     }
   }))
 
-  
-  
   const handleStatusChange = (index)=>{
     setCurrentStatusIndex(index)
   }
-
- 
- 
 
   useEffect(() => {
 
@@ -174,7 +158,6 @@ function ViewStatus() {
     })
     getTodayStatus(fromTs)
   }, [])
-
 
  
   const getTodayStatus = (fromTs) => {
@@ -247,54 +230,40 @@ function ViewStatus() {
     })
   }
 
-
-
-
-
   const formatStatusTime = (timestamp) => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+
+    const today     = new Date(),
+          yesterday = new Date(today)
+
+    yesterday.setDate(today.getDate() - 1)
   
-    if (isSameDay(timestamp, today)) {
-      return 'Today ' + formatAMPM(timestamp);
-    } else if (isSameDay(timestamp, yesterday)) {
-      return 'Yesterday ' + formatAMPM(timestamp);
+    if (timestamp.getDate() == today.getDate()) {
+      return 'Today ' + formatAMPM(timestamp)
+    } else if (timestamp.getDate() == yesterday.getDate()) {
+      return 'Yesterday ' + formatAMPM(timestamp)
     } else {
       // Display the full date and time for other days
       return timestamp.toLocaleString('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-      });
+        hour    : 'numeric',
+        minute  : 'numeric',
+        hour12  : true,
+        weekday : 'short',
+        month   : 'short',
+        day     : 'numeric',
+      })
     }
-  };
+  }
   
-  const isSameDay = (date1, date2) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
   
   const formatAMPM = (date) => {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    const strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-  };
-  
 
+    let hours   = date.getHours(),
+        minutes = date.getMinutes()
 
-
+    return ((hours % 12) || hours) + ':' 
+            + (minutes < 10 ? '0' + minutes : minutes) + ' ' 
+            + hours >= 12 ? 'PM' : 'AM'
+  }
 
   return (
     <>

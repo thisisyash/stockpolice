@@ -96,11 +96,11 @@ code {
   color: white !important;
 }
 
-.carousel-item{
-  opacity:0;
-  transition: opacity 1s !important;
+.slider {
+  transition-duration: 0ms !important;
 }
-.carousel-item.active{
-  opacity:1;
-  transition: opacity 1s !important;
+
+.control-arrow {
+  opacity: 0 !important;
+  width: 20vw !important;
 }
