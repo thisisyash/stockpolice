@@ -95,3 +95,12 @@ code {
 .MuiSelect-outlined {
   color: white !important;
 }
+
+.slider {
+  transition-duration: 0ms !important;
+}
+
+.control-arrow {
+  opacity: 0 !important;
+  width: 20vw !important;
+}
