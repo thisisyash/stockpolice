@@ -101,12 +101,12 @@ const useStyles = makeStyles((theme) => ({
 
 const moveAnimation =keyframes`
   0%  {
-    border-color : white
-    transform: scaleX(0)
+    border-color : white;
+    transform: scaleX(0);
   }
   100% {
-    border-color : white
-    transform: scaleX(1)
+    border-color : white;
+    transform: scaleX(1);
 }
 `
 
