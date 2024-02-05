@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import ComponentLoader from '../components/ComponentLoader'
 import { AuthContext } from '../contexts/AuthContext'
 import { editAlertApi, getAlerts, getUserData, getInputTheme, refreshNoti, updateAlertViews, getViewStatus, deleteStatusdoc, updateStatusViews } from '../services/api'
-import { Button, Box, Paper, TextField, Grid, Container, Icon, Snackbar} from '@mui/material'
+import { Button, Box, Paper, TextField, Grid, Container, Icon, Snackbar, keyframes} from '@mui/material'
 import { makeStyles } from "@mui/styles";
 import { getGroups } from '../services/api'
 import { useForm } from "react-hook-form";
@@ -21,37 +21,55 @@ import {NativeAudio} from '@capacitor-community/native-audio'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { NavigateBeforeRounded } from '@mui/icons-material'
 import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import styled from '@emotion/styled'
+
+
+
+const ContainerBox = styled(Box)(()=>({
+  position : 'relative'
+}))
+
+const NavBar = styled(Box)(()=>({
+  display : 'flex',
+  justifyContent : 'space-between',
+  gap : '5px',
+ 
+}))
+
+
+
 
 
 
 const useStyles = makeStyles((theme) => ({
   
-  carouselContainer: {
-    marginBottom: '20px',
-    borderRadius: '5px',
-    boxShadow: '0px 0px 5px 2px #30bbff',
-  },
-
-  statusImage: {
-    width: '100%',
-    height: 'auto',
-    borderRadius: '5px',
-  },
   
   apptCont : {
     display:'flex',
-    padding:'10px',
-    margin:'20px 15px',
-    flexDirection:'column',
-    background:'white',
-    color:'black',
-    borderRadius:'5px'
+    flexDirection :'row',
+    justifyContent : 'center',
+    borderRadius:'5px',
+    width : '100%',
+    maxWidth : '500px',
+    height : '50vh'
+  },
+  prodImg : {
+    width : '100%',
+    height : 'auto'
   },
 
   apptLabel: {
-    fontSize:'13px',
+    fontSize:'18px',
     marginTop:'10px',
-    fontWeight:'280'
+    fontWeight:'280',
+    textAlign : 'center'
+  },
+  eachStatus :{
+    position :'absolute',
+     top : '50%' ,
+     left : '50%' ,
+      transform : 'translate(-50% , -50%)'
   },
 
   center : {
@@ -87,6 +105,20 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
+
+const moveAnimation =keyframes`
+
+  0%  {
+    border-color : white;
+    transform: scaleX(0);
+  }
+  100% {
+    border-color : white;
+    transform: scaleX(1);
+};
+`
+
+
 function ViewStatus() {
   const navigate = useNavigate()
   const classes = useStyles()
@@ -96,6 +128,41 @@ function ViewStatus() {
   const [status, setStatus] = useState([])
   const [fromTs, setFromTs] = useState(new Date(new Date().setHours(0,0,0,0)).getTime())
   const {getUserId, logout, isUserAdmin} = useContext(AuthContext)
+  const [currentStatusIndex , setCurrentStatusIndex] = useState(0)
+  
+  
+
+
+
+  const NavStatusBar = styled(Box)(({statusIndex , animate })=>({
+    position : 'relative',
+    border : '2px solid gray',
+    width : '100%',
+    '&::before' : {
+      content : '""',
+      position : 'absolute',
+      top : '0',
+      left : '0',
+      width : '100%',
+      height : '100%',
+      transformOrigin : 'left',
+      borderColor :animate ? 'white' : 'gray',
+      borderWidth : '2px',
+      borderStyle : 'solid',
+      animation : statusIndex === currentStatusIndex ?  `${moveAnimation} 1s linear forwards ` : 'none',
+      margin : '-2px',
+      
+    }
+  }))
+
+  
+  
+  const handleStatusChange = (index)=>{
+    setCurrentStatusIndex(index)
+  }
+
+ 
+ 
 
   useEffect(() => {
 
@@ -107,6 +174,7 @@ function ViewStatus() {
     })
     getTodayStatus(fromTs)
   }, [])
+
 
  
   const getTodayStatus = (fromTs) => {
@@ -178,7 +246,55 @@ function ViewStatus() {
       hideLoader()
     })
   }
+
+
+
+
+
+  const formatStatusTime = (timestamp) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
   
+    if (isSameDay(timestamp, today)) {
+      return 'Today ' + formatAMPM(timestamp);
+    } else if (isSameDay(timestamp, yesterday)) {
+      return 'Yesterday ' + formatAMPM(timestamp);
+    } else {
+      // Display the full date and time for other days
+      return timestamp.toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+  };
+  
+  const isSameDay = (date1, date2) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
+  
+  const formatAMPM = (date) => {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  };
+  
+
+
+
 
   return (
     <>
@@ -190,80 +306,91 @@ function ViewStatus() {
               <Box sx={{paddingLeft:'10px'}}>
                 {new Date(fromTs).toDateString() || 'N/A'}
               </Box>
+            <ContainerBox>
+              <NavBar>
+                { status && 
+                  [...Array(status.length)].map((statusBar , index)=>(
+                    
+                    <NavStatusBar
+                     key={index} 
+                     statusIndex={index} 
+                     animate={statusBar &&
+                     (statusBar.topic === 'image' || statusBar.topic === 'desc' || statusBar.topic === 'video')}
+                     >
+                  
+                    </NavStatusBar>
+                  ))
+                  
+                }
+              </NavBar>
+              <br/>
+
+
               {
-                status.length 
-                         ?
-                         <Box>
-                          {
-                            status.map((status, newIndex) => {
-                              return <Box key={newIndex} sx={{boxShadow:'0px 0px 5px 2px #30bbff'}} className={classes.apptCont}>
-                                   <Box>
-                                    {
-                                        (status.topic=='desc' &&
-                                          (
-                                            <Box> 
-                                              <div dangerouslySetInnerHTML={{__html:status.body}}/>
-                                            </Box>
-                                          )
-                                        )                                 
-                                    }
-                                    {
-                                      (status.topic=='image' &&
-                                        (
-                                          <Box sx={{display:'flex', alignItems:'center', justifyContent:'center'}}>
-                                            <img className={classes.prodImg} style={{maxWidth: '-webkit-fill-available'}} src={status.fileLink??''} alt="Product Image" />
-                                            
-                                          </Box>
-                                          
-                                        )
-                                      )
-                                    }
-                                    {
-                                      (status.topic=='video' &&
-                                        (
-                                          <video style={{maxWidth: '-webkit-fill-available'}} className={classes.prodVideo} controls>
-                                            <source src={status.fileLink??''} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                          </video>
-                                        )
-                                      )
-                                    }
-                                    
-                                    <Box>
-                                    <Box className={classes.apptLabel}> 
-                                      {new Date(status.timeStamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                                    </Box>
-                                    {
-                                      isUserAdmin() ? 
-                                      <Box mt={2}>
-                                        <Button variant="contained" sx={{mr:3}} onClick={() => deleteStatus(status)}>
-                                          Delete
-                                        </Button>
-                                        <Button variant="contained" onClick={() => navigate('/statusViews', {state : status})}> 
-                                          Read Receipts 
-                                        </Button>
+                status.length ? 
 
-                                      </Box> : null
-                                    }
-                                  
-                                  </Box>
-                                    
-                                  </Box>
-                                  
-                              </Box>
-                               
-                            })
-                          }
-                         </Box>
-                           :
-                          <Box className={classes.center} p={4} >
-                            No Status Found
-                          </Box>
-              }
+                <Carousel
+                    showArrows={true}
+                    showThumbs={false}
+                    autoPlay={true}
+                    interval={2000}
+                    showStatus={false}
+                    showIndicators={false}
+                    onChange={handleStatusChange}
+                    
+                  >
+                  {status.map((status, newindex) => {
+                  return <Box key={newindex} sx={classes.apptCont}>
+                  <Box className={classes.apptLabel}>
+                        {formatStatusTime(new Date(status.timeStamp))}
+                  </Box>
+                 
+                  <Box sx={classes.eachStatus}>
+                    {status.topic === 'desc' && (
+                      <div dangerouslySetInnerHTML={{ __html: status.body }} style={{position :'absolute', top : '50%' ,left : '50%' , transform : 'translate(-50% , -50%)' }}/>
+                    )}
+                  </Box>
 
+                  <Box sx={classes.eachStatus}>
+                    {status.topic === 'image' && (
+                      <img
+                        className={classes.prodImg}
+                        style={{ maxWidth: '-webkit-fill-available' }}
+                        src={status.fileLink ?? ''}
+                        alt="Product Image"
+                      />
+                    )}
+                  </Box>
 
-            
-        
+                  <Box sx={classes.eachStatus}>
+                    {status.topic === 'video' && (
+                      <video
+                        style={{ maxWidth: '-webkit-fill-available' }}
+                        className={classes.prodVideo}
+                        controls
+                      >
+                        <source src={status.fileLink ?? ''} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                  </Box>
+                  </Box>
+                  }
+                  )}
+
+               
+                </Carousel>
+              
+               : 
+                <Box className={classes.center} p={4}>
+                  No Status Found
+                </Box>
+              
+            }
+               
+
+            </ContainerBox>
+             
         
       </Box>
     }
